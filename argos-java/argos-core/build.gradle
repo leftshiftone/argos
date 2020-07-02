@@ -1,3 +1,8 @@
 dependencies {
     api project(":argos-java:argos-api")
+
+    testCompile "org.junit.jupiter:junit-jupiter:5.4.2"
+    testCompile "org.assertj:assertj-core:3.11.1"
+    testCompile "io.kotlintest:kotlintest-runner-junit5:3.3.3"
+    
 }

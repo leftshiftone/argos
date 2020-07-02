@@ -24,21 +24,21 @@ class ArgosDSL private constructor(private val name: String, private val options
                 options.getListeners().forEach { it.onBeforeAssertions() }
                 Flowable.fromIterable(dsl.assertions)
             }
-                    .doOnNext { assertion ->
-                        options.getListeners().forEach { it.onBeforeAssertion(assertion) }
-                    }
-                    .flatMap { assertion ->
-                        Flowable.fromPublisher(assertion.assert(options))
-                                .map { Pair(assertion, it) }
-                                .onErrorReturn {Pair(assertion, Error(it))}
-                    }
-                    .doOnNext { result ->
-                        options.getListeners().forEach { it.onAfterAssertion(result.first, result.second) }
-                    }
-                    .doOnComplete {
-                        options.getListeners().forEach { it.onAfterAssertions() }
-                    }
-                    .map { it.second }
+            .doOnNext { assertion ->
+                options.getListeners().forEach { it.onBeforeAssertion(assertion) }
+            }
+            .flatMap { assertion ->
+                Flowable.fromPublisher(assertion.assert(options))
+                        .map { Pair(assertion, it) }
+                        .onErrorReturn {Pair(assertion, Error(it))}
+            }
+            .doOnNext { result ->
+                options.getListeners().forEach { it.onAfterAssertion(result.first, result.second) }
+            }
+            .doOnComplete {
+                options.getListeners().forEach { it.onAfterAssertions() }
+            }
+            .map { it.second }
         }
     }
 
