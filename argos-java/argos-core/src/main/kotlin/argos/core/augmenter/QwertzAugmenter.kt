@@ -72,7 +72,7 @@ class QwertzAugmenter(seed: Long? = null) {
     fun augment(value: String): String {
         val tokens = value.split("\\s+|(?=\\p{Punct})|(?<=\\p{Punct})".toRegex())
                 .filter { it.isNotBlank() }
-                .mapIndexed { i, s ->
+                .mapIndexed { _, s ->
                     if (s.length > 2 && random.nextFloat() <= 0.2) {
                         val array = s.toCharArray()
                         val index = random.nextInt(s.length)

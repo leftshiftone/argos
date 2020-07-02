@@ -1,0 +1,4 @@
+dependencies {
+    api project(":argos-java:argos-api")
+    api project(":argos-java:argos-core")
+}
