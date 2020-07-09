@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="assertions">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element type="intentAssertionType" name="intentAssertion"/>
+            </xs:choice>
+            <xs:attribute type="xs:string" name="identityId" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="intentAssertionType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="name" />
+                <xs:attribute type="xs:float" name="score" default="0.85"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+
+
+</xs:schema>

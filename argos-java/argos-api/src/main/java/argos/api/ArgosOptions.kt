@@ -7,13 +7,16 @@ import java.util.concurrent.CopyOnWriteArrayList
  * and on the other hand to handle specific argos events via assertion listeners.
  */
 class ArgosOptions(val identity: String,
-                   private val apiKey: String,
-                   private val secret: String,
-                   private val url: String) {
+                   val apiKey: String,
+                   val secret: String,
+                   val url: String) {
 
     private val listeners = CopyOnWriteArrayList<IAssertionListener>()
 
     // TODO: initialize the gaia sdk client
+    // but thats is not what I want I want an mqtt connect -> MqttSensorQueue
+
+
 
     /**
      * Registers the given assertion listener.
@@ -30,6 +33,8 @@ class ArgosOptions(val identity: String,
         }
         return CopyOnWriteArrayList(listeners)
     }
+
+
 
 
 }
