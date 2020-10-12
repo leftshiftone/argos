@@ -1,15 +1,13 @@
 package argos.api
 
+import gaia.sdk.core.GaiaConfig
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * This class contains all information which are necessary for argos to on the one hand connect to a gaia instance
  * and on the other hand to handle specific argos events via assertion listeners.
  */
-class ArgosOptions(val identity: String,
-                   private val apiKey: String,
-                   private val secret: String,
-                   private val url: String) {
+class ArgosOptions(val identity: String, val config: GaiaConfig) {
 
     private val listeners = CopyOnWriteArrayList<IAssertionListener>()
 
