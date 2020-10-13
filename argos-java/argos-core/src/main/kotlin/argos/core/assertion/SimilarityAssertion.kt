@@ -1,34 +1,32 @@
 package argos.core.assertion
 
 import argos.api.*
+import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 
-// TODO: javadoc
-class IntentAssertion(val spec: IntentAssertionSpec) : IAssertion {
+class SimilarityAssertion(val spec: SimilarityAssertionSpec) : IAssertion {
 
-    // TODO: javadoc
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
         val gaiaRef = Gaia.connect(options.config)
 
-        val result = Flowable.fromPublisher(
-                gaiaRef.skill(options.config.url)
-                        .evaluate(mapOf("text" to spec.text, "treshold" to spec.score)))
-                .map { it.asMap() }
+        val skillEvalPub: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
+                .evaluate(mapOf("text1" to spec.text1, "text2" to spec.text2))
+
+        val result = Flowable.fromPublisher(skillEvalPub).map { it.asMap() }
                 .map { e ->
                     try {
-                        if (e.get(":type")!!.equals("Match") && e.get("reference")!!.equals(spec.intent))
+                        val score = e.get("score")!!
+                        if (score is Float && score >= spec.threshold)
                             Success("success")
                         else
                             Failure("failure")
-                    }
-                    catch(ex: Throwable) {
+                    } catch (ex: Throwable) {
                         Error(ex)
                     }
                 }
 
         return result
     }
-
 }

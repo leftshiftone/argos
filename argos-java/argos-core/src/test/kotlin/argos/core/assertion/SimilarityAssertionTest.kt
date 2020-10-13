@@ -16,10 +16,9 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class IntentAssertionTest {
-    private val spec = IntentAssertionSpec(text = "ich suche einen anwalt", intent = "findLawyer")
-    private val options: ArgosOptions = ArgosOptions("",
-            GaiaConfig("", HMACCredentials("", "")))
+class SimilarityAssertionTest {
+    private val spec = SimilarityAssertionSpec("Der erste Text", "Der zweite Text", 0.9f)
+    private val options = ArgosOptions("", GaiaConfig("", HMACCredentials("", "")))
     private lateinit var gaiaRef: GaiaRef
     private lateinit var skillEval: SkillEvaluation
 
@@ -27,7 +26,7 @@ class IntentAssertionTest {
     fun testSuccess() {
         initResultType(Success(""))
 
-        val result = Flowable.fromPublisher(IntentAssertion(spec).assert(options))
+        val result = Flowable.fromPublisher(SimilarityAssertion(spec).assert(options))
 
         Assertions.assertFalse(result.isEmpty.blockingGet())
         Assertions.assertTrue(result.blockingFirst() is Success)
@@ -39,7 +38,7 @@ class IntentAssertionTest {
     fun testFailure() {
         initResultType(Failure(""))
 
-        val result = Flowable.fromPublisher(IntentAssertion(spec).assert(options))
+        val result = Flowable.fromPublisher(SimilarityAssertion(spec).assert(options))
 
         Assertions.assertFalse(result.isEmpty.blockingGet())
         Assertions.assertTrue(result.blockingFirst() is Failure)
@@ -51,7 +50,7 @@ class IntentAssertionTest {
     fun testError() {
         initResultType(argos.api.Error(Throwable()))
 
-        val result = Flowable.fromPublisher(IntentAssertion(spec).assert(options))
+        val result = Flowable.fromPublisher(SimilarityAssertion(spec).assert(options))
 
         Assertions.assertFalse(result.isEmpty.blockingGet())
         Assertions.assertTrue(result.blockingFirst() is argos.api.Error)
@@ -60,15 +59,17 @@ class IntentAssertionTest {
     }
 
     @BeforeEach
-    fun initMock() {
+    fun initMocks() {
         mockkObject(Gaia)
         gaiaRef = mockk()
+        skillEval = SkillEvaluation(mapOf("score" to 0.9f))
 
         every { Gaia.connect(options.config) } returns gaiaRef
+        every { gaiaRef.skill("").evaluate(any()) } returns Flowable.just(skillEval)
     }
 
     @AfterEach
-    fun verifyMock() {
+    fun verifyMocks() {
         verify { Gaia.connect(options.config) }
         verify { gaiaRef.skill("").evaluate(any()) }
         confirmVerified(gaiaRef)
@@ -76,8 +77,8 @@ class IntentAssertionTest {
 
     private fun initResultType(type: IAssertionResult) {
         when(type){
-            is Success -> skillEval = SkillEvaluation(mapOf(":type" to "Match", "reference" to spec.intent))
-            is Failure -> skillEval = SkillEvaluation(mapOf(":type" to "no Match"))
+            is Success -> skillEval = SkillEvaluation(mapOf("score" to 0.9f))
+            is Failure -> skillEval = SkillEvaluation(mapOf("score" to 0.8f))
             is argos.api.Error -> skillEval = SkillEvaluation(mapOf("abc" to "def"))
         }
         every { gaiaRef.skill("").evaluate(any()) } returns Flowable.just(skillEval)
@@ -88,5 +89,4 @@ class IntentAssertionTest {
                 "Type: " + result.blockingFirst()::class + "\n" +
                 "Message: " + result.blockingFirst().getMessage())
     }
-
 }

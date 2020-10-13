@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
   <xs:element name="assertions" type="assertionsType"/>
+  <xs:complexType name="assertionsType">
+    <xs:sequence>
+      <xs:element type="intentAssertionType" name="intentAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="similarityAssertionType" name="similarityAssertion" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="identityId"/>
+  </xs:complexType>
+
   <xs:complexType name="intentAssertionType">
     <xs:simpleContent>
       <xs:extension base="xs:string">
@@ -8,10 +17,13 @@
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
-  <xs:complexType name="assertionsType">
+
+  <xs:complexType name="similarityAssertionType">
     <xs:sequence>
-      <xs:element type="intentAssertionType" name="intentAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="xs:string" name="text1"/>
+      <xs:element type="xs:string" name="text2"/>
     </xs:sequence>
-    <xs:attribute type="xs:string" name="identityId"/>
+    <xs:attribute type="xs:string" name="threshold"/>
   </xs:complexType>
+
 </xs:schema>

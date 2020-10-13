@@ -1,0 +1,6 @@
+<assertions identityId="16082f40-3043-495a-8833-90fba9d04319">
+    <similarityAssertion threshold="0.9">
+        <text1>Der erste Text</text1>
+        <text2>Der zweite Text</text2>
+    </similarityAssertion>
+</assertions>

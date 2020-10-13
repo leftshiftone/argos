@@ -6,6 +6,8 @@ import argos.api.IAssertion
 import argos.api.IAssertionResult
 import argos.core.assertion.IntentAssertion
 import argos.core.assertion.IntentAssertionSpec
+import argos.core.assertion.SimilarityAssertion
+import argos.core.assertion.SimilarityAssertionSpec
 import argos.core.augmenter.QwertzAugmenter
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
@@ -52,6 +54,10 @@ class ArgosDSL private constructor(private val name: String, private val options
     @JvmOverloads
     fun assertIntent(text: String, intent: String, score: Float = 0.85f) {
         assertions.add(IntentAssertion(IntentAssertionSpec(text, intent, score)))
+    }
+
+    fun assertSimilarity(text1: String, text2: String, threshold: Float) {
+        assertions.add(SimilarityAssertion(SimilarityAssertionSpec(text1, text2, threshold)))
     }
 
     // TODO: javadoc
