@@ -1,6 +1,7 @@
 package argos.core.assertion
 
 import argos.api.*
+import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
@@ -12,9 +13,10 @@ class IntentAssertion(val spec: IntentAssertionSpec) : IAssertion {
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
         val gaiaRef = Gaia.connect(options.config)
 
-        val result = Flowable.fromPublisher(
-                gaiaRef.skill(options.config.url)
-                        .evaluate(mapOf("text" to spec.text, "treshold" to spec.score)))
+        val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
+                .evaluate(mapOf("text" to spec.text, "treshold" to spec.score))
+
+        val result = Flowable.fromPublisher(request)
                 .map { it.asMap() }
                 .map { e ->
                     try {

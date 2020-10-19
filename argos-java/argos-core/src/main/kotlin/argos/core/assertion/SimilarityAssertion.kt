@@ -11,10 +11,10 @@ class SimilarityAssertion(val spec: SimilarityAssertionSpec) : IAssertion {
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
         val gaiaRef = Gaia.connect(options.config)
 
-        val skillEvalPub: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
+        val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
                 .evaluate(mapOf("text1" to spec.text1, "text2" to spec.text2))
 
-        val result = Flowable.fromPublisher(skillEvalPub).map { it.asMap() }
+        val result = Flowable.fromPublisher(request).map { it.asMap() }
                 .map { e ->
                     try {
                         val score = e.get("score")!!

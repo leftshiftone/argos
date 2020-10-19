@@ -1,0 +1,6 @@
+<assertions identityId="16082f40-3043-495a-8833-90fba9d04319">
+    <nerAssertion text="ich suche einen anwalt in der steiermark">
+        <entity label="location" index="6">steiermark</entity>
+        <entity label="organization" not="true" />
+    </nerAssertion>
+</assertions>

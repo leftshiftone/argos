@@ -1,20 +1,16 @@
 package argos.runtime.xml
 
 import argos.api.IAssertion
-import argos.core.assertion.IntentAssertion
-import argos.core.assertion.IntentAssertionSpec
-import argos.core.assertion.SimilarityAssertion
-import argos.core.assertion.SimilarityAssertionSpec
-import argos.runtime.xml.support.XmlParser
-import argos.runtime.xml.support.findAttr
-import argos.runtime.xml.support.map
-import argos.runtime.xml.support.toList
+import argos.core.assertion.*
+import argos.runtime.xml.support.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 
 // TODO: javadoc
 class ArgosXML {
+    data class ParsedAssertions(val identityId: String, val assertionList: List<IAssertion>)
+
     private val assertions: MutableList<IAssertion> = emptyList<IAssertion>().toMutableList()
     private val scheme = File("./src/main/resources/argos.xsd")
 
@@ -25,6 +21,7 @@ class ArgosXML {
                 .findAttr("identityId").get()
         val intentAssertions = doc.getElementsByTagName("intentAssertion")
         val similarityAssertions = doc.getElementsByTagName("similarityAssertion")
+        val nerAssertions = doc.getElementsByTagName("nerAssertion")
 
         for (intentAssertion in intentAssertions.toList()) {
             val text: String = intentAssertion.textContent
@@ -42,8 +39,21 @@ class ArgosXML {
             assertions.add(SimilarityAssertion(SimilarityAssertionSpec(text1, text2, threshold)))
         }
 
+        val entityList: MutableList<NERAssertionSpec.Entity> = emptyList<NERAssertionSpec.Entity>().toMutableList()
+        for (nerAssertion in nerAssertions.toList()) {
+            val text: String = nerAssertion.findAttr("text").get()
+            val entities = nerAssertion.findAll("entity")
+            for (entity in entities) {
+                val entityText: String = entity.textContent
+                val label: String = entity.attributes.getNamedItem("label")?.textContent!!
+                val index: Int? = entity.attributes.getNamedItem("index")?.textContent?.toIntOrNull()
+                val not: Boolean = entity.attributes.getNamedItem("not")?.textContent?.equals("true") ?: false
+
+                entityList.add(NERAssertionSpec.Entity(entityText, label, index, not))
+            }
+            assertions.add(NERAssertion(NERAssertionSpec(text, entityList)))
+        }
+
         return ParsedAssertions(identityId, assertions)
     }
 }
-
-data class ParsedAssertions(val identityId: String, val assertionList: List<IAssertion>)

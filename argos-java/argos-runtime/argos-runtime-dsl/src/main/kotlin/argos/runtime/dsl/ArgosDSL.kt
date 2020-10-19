@@ -4,10 +4,7 @@ import argos.api.ArgosOptions
 import argos.api.Error
 import argos.api.IAssertion
 import argos.api.IAssertionResult
-import argos.core.assertion.IntentAssertion
-import argos.core.assertion.IntentAssertionSpec
-import argos.core.assertion.SimilarityAssertion
-import argos.core.assertion.SimilarityAssertionSpec
+import argos.core.assertion.*
 import argos.core.augmenter.QwertzAugmenter
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
@@ -60,9 +57,32 @@ class ArgosDSL private constructor(private val name: String, private val options
         assertions.add(SimilarityAssertion(SimilarityAssertionSpec(text1, text2, threshold)))
     }
 
+    fun assertNer(text: String, action: NER.() -> Unit) {
+        val entity = NER()
+        action(entity)
+        assertions.add(NERAssertion(NERAssertionSpec(text, entity)))
+    }
+
+    class NER: ArrayList<NERAssertionSpec.Entity>() {
+        fun entity(label: String, text: String? = null, index: Int?=null, not: Boolean = false)
+                : NERAssertionSpec.Entity {
+            val entity = NERAssertionSpec.Entity(label, text, index, not)
+            add(entity)
+
+            return entity
+        }
+
+        fun not(entity: NERAssertionSpec.Entity): NERAssertionSpec.Entity {
+            remove(entity)
+            val notEntity = NERAssertionSpec.Entity(entity.label, entity.text, entity.index, not = true)
+            add(notEntity)
+
+            return notEntity
+        }
+    }
+
     // TODO: javadoc
     fun qwertzAugmentation(text: String, seed: Long? = null): String {
         return QwertzAugmenter(seed).augment(text)
     }
-
 }
