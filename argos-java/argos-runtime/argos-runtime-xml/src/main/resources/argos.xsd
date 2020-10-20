@@ -7,6 +7,7 @@
       <xs:element type="intentAssertionType" name="intentAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="similarityAssertionType" name="similarityAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="nerAssertionType" name="nerAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="translationAssertionType" name="translationAssertion" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="identityId"/>
   </xs:complexType>
@@ -39,6 +40,20 @@
         <xs:attribute type="xs:string" name="label"/>
         <xs:attribute type="xs:string" name="index"/>
         <xs:attribute type="xs:string" name="not"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="translationAssertionType">
+    <xs:sequence>
+      <xs:element type="textType" name="text" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="threshold"/>
+  </xs:complexType>
+  <xs:complexType name="textType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="lang"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>

@@ -3,6 +3,7 @@ package argos.runtime.xml
 import argos.core.assertion.IntentAssertion
 import argos.core.assertion.NERAssertion
 import argos.core.assertion.SimilarityAssertion
+import argos.core.assertion.TranslationAssertion
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -13,6 +14,7 @@ class ArgosXMLTest {
     val intentXmlFile: File = File(resourcesPath, "intentAssertionTest.xml")
     val similarityXmlFile: File = File(resourcesPath, "similarityAssertionTest.xml")
     val nerXmlFile: File = File(resourcesPath, "nerAssertionTest.xml")
+    val translationXmlFile = File(resourcesPath, "translationAssertionTest.xml")
 
     @Test
     fun testIntentAssertions() {
@@ -65,6 +67,8 @@ class ArgosXMLTest {
             if (assertion is NERAssertion) {
                 val entities = assertion.spec.entities
 
+                Assertions.assertEquals(2, assertion.spec.entities.size)
+
                 Assertions.assertEquals("ich suche einen anwalt in der steiermark", assertion.spec.text)
 
                 Assertions.assertEquals("steiermark", entities[0].text)
@@ -76,6 +80,29 @@ class ArgosXMLTest {
                 Assertions.assertEquals("organization", entities[1].label)
                 Assertions.assertEquals(null, entities[1].index)
                 Assertions.assertTrue(entities[1].not)
+            }
+        }
+    }
+
+    @Test
+    fun testTranslationAssertions() {
+        val parsed = ArgosXML().parse(FileInputStream(translationXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if(assertion is TranslationAssertion) {
+                Assertions.assertEquals(0.9f, assertion.spec.threshold)
+
+                Assertions.assertEquals("ich suche einen anwalt", assertion.spec.inText)
+                Assertions.assertEquals("de", assertion.spec.inLang)
+
+                Assertions.assertEquals("i am looking for a lawyer", assertion.spec.translatedText)
+                Assertions.assertEquals("en", assertion.spec.translationLang)
             }
         }
     }

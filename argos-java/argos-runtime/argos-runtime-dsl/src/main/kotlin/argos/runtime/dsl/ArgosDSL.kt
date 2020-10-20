@@ -53,7 +53,8 @@ class ArgosDSL private constructor(private val name: String, private val options
         assertions.add(IntentAssertion(IntentAssertionSpec(text, intent, score)))
     }
 
-    fun assertSimilarity(text1: String, text2: String, threshold: Float) {
+    @JvmOverloads
+    fun assertSimilarity(text1: String, text2: String, threshold: Float = 0.9f) {
         assertions.add(SimilarityAssertion(SimilarityAssertionSpec(text1, text2, threshold)))
     }
 
@@ -79,6 +80,13 @@ class ArgosDSL private constructor(private val name: String, private val options
 
             return notEntity
         }
+    }
+
+    @JvmOverloads
+    fun assertTranslation(inLang: String, inText: String,
+                          translationLang: String, translatedText: String, threshold: Float = 0.9f) {
+        assertions.add(TranslationAssertion(
+                TranslationAssertionSpec(inLang, inText, translationLang, translatedText, threshold)))
     }
 
     // TODO: javadoc

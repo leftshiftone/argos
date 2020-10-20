@@ -37,7 +37,7 @@ class ArgosDSLTest {
                 SkillEvaluation(mapOf("score" to 0.9f)))
 
         val result = ArgosDSL.argos("argos test", options) {
-            assertSimilarity("Der erste Text", "Der zweite Text", 0.9f)
+            assertSimilarity("Der erste Text", "Der zweite Text")
         }
         val type = Flowable.fromPublisher(result).blockingFirst()
 
@@ -54,6 +54,20 @@ class ArgosDSLTest {
                 entity("location", "steiermark", 6)
                 not(entity("organization"))
             }
+        }
+        val type = Flowable.fromPublisher(result).blockingFirst()
+
+        Assertions.assertTrue(type is Success)
+    }
+
+    @Test
+    fun testTranslation() {
+        every { gaiaRef.skill("").evaluate(any()) } returns Flowable.just(
+                SkillEvaluation(mapOf("text" to "i am looking for a lawyer", "lang" to "en")))
+
+        val result = ArgosDSL.argos("argos test", options) {
+            assertTranslation("de", "ich suche einen anwalt",
+                    "en", "i am looking for a lawyer", 0.9f)
         }
         val type = Flowable.fromPublisher(result).blockingFirst()
 

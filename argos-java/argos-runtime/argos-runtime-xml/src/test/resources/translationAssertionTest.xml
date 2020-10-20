@@ -1,0 +1,6 @@
+<assertions identityId="16082f40-3043-495a-8833-90fba9d04319">
+    <translationAssertion threshold="0.9">
+        <text lang="de">ich suche einen anwalt</text>
+        <text lang="en">i am looking for a lawyer</text>
+    </translationAssertion>
+</assertions>
