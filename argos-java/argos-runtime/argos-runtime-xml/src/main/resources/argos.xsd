@@ -8,6 +8,7 @@
       <xs:element type="similarityAssertionType" name="similarityAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="nerAssertionType" name="nerAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="translationAssertionType" name="translationAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="sentimentAssertionType" name="sentimentAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="conversationAssertionType" name="conversationAssertion" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="identityId"/>
@@ -59,6 +60,15 @@
     <xs:simpleContent>
       <xs:extension base="xs:string">
         <xs:attribute type="xs:string" name="lang"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+<!--  Sentiment Assertion -->
+  <xs:complexType name="sentimentAssertionType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="type"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>

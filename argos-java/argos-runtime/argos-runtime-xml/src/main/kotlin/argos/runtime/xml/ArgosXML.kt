@@ -25,6 +25,7 @@ class ArgosXML {
         val similarityAssertions = doc.getElementsByTagName("similarityAssertion")
         val nerAssertions = doc.getElementsByTagName("nerAssertion")
         val translationAssertions = doc.getElementsByTagName("translationAssertion")
+        val sentimentAssertions = doc.getElementsByTagName("sentimentAssertion")
         val conversationAssertions = doc.getElementsByTagName("conversationAssertion")
 
         // Parse IntentAssertions
@@ -80,6 +81,14 @@ class ArgosXML {
                         textList[1].get("text")!!,
                         threshold)))
             }
+        }
+
+        // Parse SentimentAssertions
+        for (sentimentAssertion in sentimentAssertions.toList()) {
+            val text = sentimentAssertion.textContent
+            val type = sentimentAssertion.findAttr("type").get()
+
+            assertions.add(SentimentAssertion(SentimentAssertionSpec(text, type)))
         }
 
         // Parse ConversationAssertions

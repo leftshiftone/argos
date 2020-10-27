@@ -21,8 +21,7 @@ class ArgosDSLTest {
 
     @Test
     fun testIntent() {
-        every { gaiaRef.skill("").evaluate(any()) } returns Flowable.just(
-                SkillEvaluation(mapOf(":type" to "Match", "reference" to "findLawyer")))
+        setResponse(mapOf(":type" to "Match", "reference" to "findLawyer"))
 
         val result = ArgosDSL.argos("argos test", options) {
             assertIntent("ich suche einen anwalt", "findLawyer")
@@ -34,8 +33,7 @@ class ArgosDSLTest {
 
     @Test
     fun testSimilarity() {
-        every { gaiaRef.skill("").evaluate(any()) } returns Flowable.just(
-                SkillEvaluation(mapOf("score" to 0.9f)))
+        setResponse(mapOf("score" to 0.9f))
 
         val result = ArgosDSL.argos("argos test", options) {
             assertSimilarity("Der erste Text", "Der zweite Text")
@@ -47,8 +45,7 @@ class ArgosDSLTest {
 
     @Test
     fun testNER() {
-        every { gaiaRef.skill("").evaluate(any()) } returns Flowable.just(
-                SkillEvaluation(mapOf("ner" to listOf(mapOf("text" to "steiermark", "label" to "location")))))
+        setResponse(mapOf("ner" to listOf(mapOf("text" to "steiermark", "label" to "location"))))
 
         val result = ArgosDSL.argos("argos test", options) {
             assertNer("ich suche einen anwalt in der steiermark") {
@@ -63,8 +60,7 @@ class ArgosDSLTest {
 
     @Test
     fun testTranslation() {
-        every { gaiaRef.skill("").evaluate(any()) } returns Flowable.just(
-                SkillEvaluation(mapOf("text" to "i am looking for a lawyer", "lang" to "en")))
+        setResponse(mapOf("text" to "i am looking for a lawyer", "lang" to "en"))
 
         val result = ArgosDSL.argos("argos test", options) {
             assertTranslation("de", "ich suche einen anwalt",
@@ -73,6 +69,28 @@ class ArgosDSLTest {
         val type = Flowable.fromPublisher(result).blockingFirst()
 
         Assertions.assertTrue(type is Success)
+    }
+
+    @Test
+    fun testSentiment() {
+        setResponse(mapOf("type" to "neutral"))
+        val result = ArgosDSL.argos("argos test", options) {
+            assertSentiment("ich suche einen anwalt", "neutral")
+        }
+        Assertions.assertTrue(Flowable.fromPublisher(result).blockingFirst() is Success)
+
+
+        every { gaiaRef.skill("").evaluate(mapOf("text" to "Das Produkt ist gut")) } returns Flowable.just(
+                SkillEvaluation(mapOf("type" to "positive")))
+        every { gaiaRef.skill("").evaluate(mapOf("text" to "Das Produkt ist nicht gut")) } returns Flowable.just(
+                SkillEvaluation(mapOf("type" to "negative")))
+
+        val response = ArgosDSL.argos("argos test", options) {
+            assertSentiment("Das Produkt ist gut", "positive")
+            assertSentiment("Das Produkt ist nicht gut", "negative")
+        }
+
+        Flowable.fromPublisher(response).forEach { Assertions.assertTrue(it is Success) }
     }
 
     @Test
@@ -103,11 +121,16 @@ class ArgosDSLTest {
 
     @AfterEach
     fun verifyMock() {
-//        verify { Gaia.connect(options.config) }
-//        verify { gaiaRef.skill("").evaluate(any()) }
-//        verify { ArgosDSL.argos("argos test", options, any()) }
-//
-//        confirmVerified(ArgosDSL)
-//        confirmVerified(gaiaRef)
+        verify { Gaia.connect(options.config) }
+        verify { gaiaRef.skill("").evaluate(any()) }
+        verify { ArgosDSL.argos("argos test", options, any()) }
+
+        confirmVerified(ArgosDSL)
+        confirmVerified(gaiaRef)
+    }
+
+    fun setResponse(map: Map<String, Any>) {
+        every { gaiaRef.skill("").evaluate(any()) } returns Flowable.just(
+                SkillEvaluation(map))
     }
 }

@@ -104,6 +104,10 @@ class ArgosDSL private constructor(private val name: String, private val options
         }
     }
 
+    fun assertSentiment(text: String, type: String) {
+        assertions.add(SentimentAssertion(SentimentAssertionSpec(text, type)))
+    }
+
     // TODO: javadoc
     fun qwertzAugmentation(text: String, seed: Long? = null): String {
         return QwertzAugmenter(seed).augment(text)

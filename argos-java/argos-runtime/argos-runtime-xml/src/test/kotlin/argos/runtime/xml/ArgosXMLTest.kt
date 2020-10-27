@@ -12,6 +12,7 @@ class ArgosXMLTest {
     val similarityXmlFile: File = File(resourcesPath, "similarityAssertionTest.xml")
     val nerXmlFile: File = File(resourcesPath, "nerAssertionTest.xml")
     val translationXmlFile = File(resourcesPath, "translationAssertionTest.xml")
+    val sentimentXmlFile = File(resourcesPath, "sentimentAssertionTest.xml")
     val conversationXmlFile = File(resourcesPath, "conversationAssertionTest.xml")
 
     @Test
@@ -101,6 +102,24 @@ class ArgosXMLTest {
 
                 Assertions.assertEquals("i am looking for a lawyer", assertion.spec.translatedText)
                 Assertions.assertEquals("en", assertion.spec.translationLang)
+            }
+        }
+    }
+
+    @Test
+    fun testSentimentAssertion() {
+        val parsed = ArgosXML().parse(FileInputStream(sentimentXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if (assertion is SentimentAssertion) {
+                Assertions.assertEquals("ich suche einen anwalt", assertion.spec.text)
+                Assertions.assertEquals("neutral", assertion.spec.type)
             }
         }
     }
