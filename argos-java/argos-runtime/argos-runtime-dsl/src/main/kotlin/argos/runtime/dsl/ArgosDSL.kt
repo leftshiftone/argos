@@ -89,6 +89,21 @@ class ArgosDSL private constructor(private val name: String, private val options
                 TranslationAssertionSpec(inLang, inText, translationLang, translatedText, threshold)))
     }
 
+    fun assertConversation(action: Conversation.() -> Unit) {
+        val conversationElements = Conversation()
+        action(conversationElements)
+        assertions.add(ConversationAssertion(ConversationAssertionSpec(conversationElements)))
+    }
+
+    class Conversation: ArrayList<argos.core.assertion.Conversation.Element>() {
+        fun gaia(vararg properties: argos.core.assertion.Conversation.Property) {
+            add(argos.core.assertion.Conversation.GaiaInteraction(properties.toList()))
+        }
+        fun user(vararg properties: argos.core.assertion.Conversation.Property) {
+            add(argos.core.assertion.Conversation.UserInteraction(properties.toList()))
+        }
+    }
+
     // TODO: javadoc
     fun qwertzAugmentation(text: String, seed: Long? = null): String {
         return QwertzAugmenter(seed).augment(text)

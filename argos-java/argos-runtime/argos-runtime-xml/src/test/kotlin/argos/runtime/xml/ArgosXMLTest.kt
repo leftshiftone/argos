@@ -1,9 +1,6 @@
 package argos.runtime.xml
 
-import argos.core.assertion.IntentAssertion
-import argos.core.assertion.NERAssertion
-import argos.core.assertion.SimilarityAssertion
-import argos.core.assertion.TranslationAssertion
+import argos.core.assertion.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -15,6 +12,7 @@ class ArgosXMLTest {
     val similarityXmlFile: File = File(resourcesPath, "similarityAssertionTest.xml")
     val nerXmlFile: File = File(resourcesPath, "nerAssertionTest.xml")
     val translationXmlFile = File(resourcesPath, "translationAssertionTest.xml")
+    val conversationXmlFile = File(resourcesPath, "conversationAssertionTest.xml")
 
     @Test
     fun testIntentAssertions() {
@@ -103,6 +101,28 @@ class ArgosXMLTest {
 
                 Assertions.assertEquals("i am looking for a lawyer", assertion.spec.translatedText)
                 Assertions.assertEquals("en", assertion.spec.translationLang)
+            }
+        }
+    }
+
+    @Test
+    fun testConversationAssertions() {
+        val parsed = ArgosXML().parse(FileInputStream(conversationXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if (assertion is ConversationAssertion) {
+                Assertions.assertTrue(
+                        assertion.spec.elements.filterIsInstance<Conversation.GaiaInteraction>().size == 25)
+                Assertions.assertTrue(
+                        assertion.spec.elements.filterIsInstance<Conversation.UserInteraction>().size == 14)
+
+                assertion.spec.elements.forEach { it.printElement() }
             }
         }
     }
