@@ -10,115 +10,128 @@ import java.io.InputStream
 import java.lang.Exception
 
 // TODO: javadoc
-class ArgosXML {
+class ArgosXML private constructor() {
     data class ParsedAssertions(val identityId: String, val assertionList: List<IAssertion>)
 
     private val assertions: MutableList<IAssertion> = emptyList<IAssertion>().toMutableList()
     private val scheme = File("./src/main/resources/argos.xsd")
 
-    fun parse(input: InputStream): ParsedAssertions {
-        val doc = XmlParser(FileInputStream(scheme)).invoke(input)
+    companion object {
+        fun parse(input: InputStream): ParsedAssertions {
+            val xml = ArgosXML()
+            val doc = XmlParser(FileInputStream(xml.scheme)).invoke(input)
 
-        val identityId: String = doc.getElementsByTagName("assertions").item(0)
-                .findAttr("identityId").get()
-        val intentAssertions = doc.getElementsByTagName("intentAssertion")
-        val similarityAssertions = doc.getElementsByTagName("similarityAssertion")
-        val nerAssertions = doc.getElementsByTagName("nerAssertion")
-        val translationAssertions = doc.getElementsByTagName("translationAssertion")
-        val sentimentAssertions = doc.getElementsByTagName("sentimentAssertion")
-        val conversationAssertions = doc.getElementsByTagName("conversationAssertion")
+            val identityId: String = doc.getElementsByTagName("assertions").item(0)
+                    .findAttr("identityId").get()
+            val intentAssertions = doc.getElementsByTagName("intentAssertion")
+            val similarityAssertions = doc.getElementsByTagName("similarityAssertion")
+            val nerAssertions = doc.getElementsByTagName("nerAssertion")
+            val translationAssertions = doc.getElementsByTagName("translationAssertion")
+            val sentimentAssertions = doc.getElementsByTagName("sentimentAssertion")
+            val imageSimilarityAssertions = doc.getElementsByTagName("imageSimilarityAssertion")
+            val conversationAssertions = doc.getElementsByTagName("conversationAssertion")
 
-        // Parse IntentAssertions
-        for (intentAssertion in intentAssertions.toList()) {
-            val text: String = intentAssertion.textContent
-            val intent: String = intentAssertion.findAttr("name").get()
+            // Parse IntentAssertions
+            for (intentAssertion in intentAssertions.toList()) {
+                val text: String = intentAssertion.textContent
+                val intent: String = intentAssertion.findAttr("name").get()
 
-            assertions.add(IntentAssertion((IntentAssertionSpec(text, intent))))
-        }
-
-        // Parse SimilarityAssertions
-        for (similarityAssertion in similarityAssertions.toList()) {
-            val threshold: Float = similarityAssertion.findAttr("threshold").get().toFloat()
-            val texts: List<String> = similarityAssertion.childNodes.map { it.textContent }
-            val text1: String = texts.get(0)
-            val text2: String = texts.get(1)
-
-            assertions.add(SimilarityAssertion(SimilarityAssertionSpec(text1, text2, threshold)))
-        }
-
-        // Parse NERAssertions
-        val entityList: MutableList<NERAssertionSpec.Entity> = emptyList<NERAssertionSpec.Entity>().toMutableList()
-        for (nerAssertion in nerAssertions.toList()) {
-            val text: String = nerAssertion.findAttr("text").get()
-            val entities = nerAssertion.findAll("entity")
-            for (entity in entities) {
-                val entityText: String = entity.textContent
-                val label: String = entity.attributes.getNamedItem("label")?.textContent!!
-                val index: Int? = entity.attributes.getNamedItem("index")?.textContent?.toIntOrNull()
-                val not: Boolean = entity.attributes.getNamedItem("not")?.textContent?.equals("true") ?: false
-
-                entityList.add(NERAssertionSpec.Entity(label, entityText, index, not))
+                xml.assertions.add(IntentAssertion((IntentAssertionSpec(text, intent))))
             }
-            assertions.add(NERAssertion(NERAssertionSpec(text, entityList)))
-        }
 
-        // Parse TranslationAssertions
-        for(translationAssertion in translationAssertions.toList()) {
-            val threshold = translationAssertion.findAttr("threshold").get().toFloat()
-            val assertionText = translationAssertion.findAll("text")
-            if (assertionText.size == 2) {
-                val textList: MutableList<Map<String, String>> = emptyList<Map<String, String>>().toMutableList()
-                for (aText in assertionText) {
-                    textList.add(mapOf(
-                            "text" to aText.textContent,
-                            "lang" to aText.attributes.getNamedItem("lang")?.textContent!!))
+            // Parse SimilarityAssertions
+            for (similarityAssertion in similarityAssertions.toList()) {
+                val threshold: Float = similarityAssertion.findAttr("threshold").get().toFloat()
+                val texts: List<String> = similarityAssertion.childNodes.map { it.textContent }
+                val text1: String = texts.get(0)
+                val text2: String = texts.get(1)
+
+                xml.assertions.add(SimilarityAssertion(SimilarityAssertionSpec(text1, text2, threshold)))
+            }
+
+            // Parse NERAssertions
+            val entityList: MutableList<NERAssertionSpec.Entity> = emptyList<NERAssertionSpec.Entity>().toMutableList()
+            for (nerAssertion in nerAssertions.toList()) {
+                val text: String = nerAssertion.findAttr("text").get()
+                val entities = nerAssertion.findAll("entity")
+                for (entity in entities) {
+                    val entityText: String = entity.textContent
+                    val label: String = entity.attributes.getNamedItem("label")?.textContent!!
+                    val index: Int? = entity.attributes.getNamedItem("index")?.textContent?.toIntOrNull()
+                    val not: Boolean = entity.attributes.getNamedItem("not")?.textContent?.equals("true") ?: false
+
+                    entityList.add(NERAssertionSpec.Entity(label, entityText, index, not))
                 }
-
-                assertions.add(TranslationAssertion(TranslationAssertionSpec(
-                        textList[0].get("lang")!!,
-                        textList[0].get("text")!!,
-                        textList[1].get("lang")!!,
-                        textList[1].get("text")!!,
-                        threshold)))
+                xml.assertions.add(NERAssertion(NERAssertionSpec(text, entityList)))
             }
+
+            // Parse TranslationAssertions
+            for(translationAssertion in translationAssertions.toList()) {
+                val threshold = translationAssertion.findAttr("threshold").get().toFloat()
+                val assertionText = translationAssertion.findAll("text")
+                if (assertionText.size == 2) {
+                    val textList: MutableList<Map<String, String>> = emptyList<Map<String, String>>().toMutableList()
+                    for (aText in assertionText) {
+                        textList.add(mapOf(
+                                "text" to aText.textContent,
+                                "lang" to aText.attributes.getNamedItem("lang")?.textContent!!))
+                    }
+
+                    xml.assertions.add(TranslationAssertion(TranslationAssertionSpec(
+                            textList[0].get("lang")!!,
+                            textList[0].get("text")!!,
+                            textList[1].get("lang")!!,
+                            textList[1].get("text")!!,
+                            threshold)))
+                }
+            }
+
+            // Parse SentimentAssertions
+            for (sentimentAssertion in sentimentAssertions.toList()) {
+                val text = sentimentAssertion.textContent
+                val type = sentimentAssertion.findAttr("type").get()
+
+                xml.assertions.add(SentimentAssertion(SentimentAssertionSpec(text, type)))
+            }
+
+            // Parse ImageSimilarityAssertions
+            for (imageSimilarityAssertion in imageSimilarityAssertions.toList()) {
+                val image1 = imageSimilarityAssertion.findAttr("image1").get()
+                val image2 = imageSimilarityAssertion.findAttr("image2").get()
+                val threshold = imageSimilarityAssertion.findAttr("threshold").get().toFloat()
+
+                xml.assertions.add(ImageSimilarityAssertion(ImageSimilarityAssertionSpec(image1, image2, threshold)))
+            }
+
+            // Parse ConversationAssertions
+            for (conversationAssertion in conversationAssertions.toList()) {
+                val conversationList = ArrayList(conversationAssertion.findAll("gaia", "user")
+                        .map {
+                            val propertyList = emptyList<Conversation.Property>().toMutableList()
+
+                            it.findAll("text", "button", "block", "headline", "link", "break")
+                                    .map { node ->
+                                        when(node.nodeName) {
+                                            "text" -> ConversationPropertyBuilder.createTextFromNode(node)
+                                            "button" -> ConversationPropertyBuilder.createButtonFromNode(node)
+                                            "block" -> ConversationPropertyBuilder.createBlockFromNode(node)
+                                            "headline" -> ConversationPropertyBuilder.createHeadlineFromNode(node)
+                                            "link" -> ConversationPropertyBuilder.createLinkFromNode(node)
+                                            "break" -> ConversationPropertyBuilder.createBreakFromNode(node)
+                                            else -> throw Exception()
+                                        }
+                                    }
+                                    .forEach { propertyList.add(it) }
+
+                            Conversation.create(
+                                    Conversation.Type.valueOf(it.nodeName.toUpperCase()), *propertyList.toTypedArray()                    )
+                        })
+
+                xml.assertions.add(ConversationAssertion(ConversationAssertionSpec(conversationList)))
+            }
+
+            return ParsedAssertions(identityId, xml.assertions)
         }
-
-        // Parse SentimentAssertions
-        for (sentimentAssertion in sentimentAssertions.toList()) {
-            val text = sentimentAssertion.textContent
-            val type = sentimentAssertion.findAttr("type").get()
-
-            assertions.add(SentimentAssertion(SentimentAssertionSpec(text, type)))
-        }
-
-        // Parse ConversationAssertions
-        for (conversationAssertion in conversationAssertions.toList()) {
-            val conversationList = ArrayList(conversationAssertion.findAll("gaia", "user")
-                .map {
-                    val propertyList = emptyList<Conversation.Property>().toMutableList()
-
-                    it.findAll("text", "button", "block", "headline", "link", "break")
-                            .map { node ->
-                                when(node.nodeName) {
-                                    "text" -> ConversationPropertyBuilder.createTextFromNode(node)
-                                    "button" -> ConversationPropertyBuilder.createButtonFromNode(node)
-                                    "block" -> ConversationPropertyBuilder.createBlockFromNode(node)
-                                    "headline" -> ConversationPropertyBuilder.createHeadlineFromNode(node)
-                                    "link" -> ConversationPropertyBuilder.createLinkFromNode(node)
-                                    "break" -> ConversationPropertyBuilder.createBreakFromNode(node)
-                                    else -> throw Exception()
-                                }
-                            }
-                            .forEach { propertyList.add(it) }
-
-                    Conversation.create(
-                            Conversation.Type.valueOf(it.nodeName.toUpperCase()), *propertyList.toTypedArray()                    )
-                })
-
-            assertions.add(ConversationAssertion(ConversationAssertionSpec(conversationList)))
-        }
-
-        return ParsedAssertions(identityId, assertions)
     }
 
     private object ConversationPropertyBuilder {

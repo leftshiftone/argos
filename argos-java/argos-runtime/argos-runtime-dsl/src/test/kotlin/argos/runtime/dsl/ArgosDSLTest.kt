@@ -94,6 +94,19 @@ class ArgosDSLTest {
     }
 
     @Test
+    fun testImageSimilarity() {
+        setResponse(mapOf("score" to 0.9f))
+        val exampleImage = "https://image.shutterstock.com/image-photo/abstract-ocean-art-natural-luxury-600w-1040400583.jpg"
+
+        val result = ArgosDSL.argos("argos test", options) {
+            assertImageSimilarity(exampleImage, exampleImage,0.9f)
+        }
+        val type = Flowable.fromPublisher(result).blockingFirst()
+
+        Assertions.assertTrue(type is Success)
+    }
+
+    @Test
     fun testConversation() {
         ArgosDSL.argos("argos test", options) {
             assertConversation {

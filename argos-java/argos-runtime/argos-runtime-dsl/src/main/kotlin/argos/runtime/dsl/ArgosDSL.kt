@@ -89,6 +89,15 @@ class ArgosDSL private constructor(private val name: String, private val options
                 TranslationAssertionSpec(inLang, inText, translationLang, translatedText, threshold)))
     }
 
+    fun assertSentiment(text: String, type: String) {
+        assertions.add(SentimentAssertion(SentimentAssertionSpec(text, type)))
+    }
+
+    @JvmOverloads
+    fun assertImageSimilarity(image1: String, image2: String, threshold: Float = 0.9f) {
+        assertions.add(ImageSimilarityAssertion(ImageSimilarityAssertionSpec(image1, image2, threshold)))
+    }
+
     fun assertConversation(action: Conversation.() -> Unit) {
         val conversationElements = Conversation()
         action(conversationElements)
@@ -102,10 +111,6 @@ class ArgosDSL private constructor(private val name: String, private val options
         fun user(vararg properties: argos.core.assertion.Conversation.Property) {
             add(argos.core.assertion.Conversation.UserInteraction(properties.toList()))
         }
-    }
-
-    fun assertSentiment(text: String, type: String) {
-        assertions.add(SentimentAssertion(SentimentAssertionSpec(text, type)))
     }
 
     // TODO: javadoc

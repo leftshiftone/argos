@@ -13,11 +13,12 @@ class ArgosXMLTest {
     val nerXmlFile: File = File(resourcesPath, "nerAssertionTest.xml")
     val translationXmlFile = File(resourcesPath, "translationAssertionTest.xml")
     val sentimentXmlFile = File(resourcesPath, "sentimentAssertionTest.xml")
+    val imageSimilarityXmlFile = File(resourcesPath, "imageSimilarityAssertionTest.xml")
     val conversationXmlFile = File(resourcesPath, "conversationAssertionTest.xml")
 
     @Test
     fun testIntentAssertions() {
-        val parsed = ArgosXML().parse(FileInputStream(intentXmlFile))
+        val parsed = ArgosXML.parse(FileInputStream(intentXmlFile))
 
         val identityId = parsed.identityId
         val assertionList = parsed.assertionList
@@ -35,7 +36,7 @@ class ArgosXMLTest {
 
     @Test
     fun testSimilarityAssertions() {
-        val parsed = ArgosXML().parse(FileInputStream(similarityXmlFile))
+        val parsed = ArgosXML.parse(FileInputStream(similarityXmlFile))
 
         val identityId = parsed.identityId
         val assertionList = parsed.assertionList
@@ -54,7 +55,7 @@ class ArgosXMLTest {
 
     @Test
     fun testNerAssertions() {
-        val parsed = ArgosXML().parse(FileInputStream(nerXmlFile))
+        val parsed = ArgosXML.parse(FileInputStream(nerXmlFile))
 
         val identityId = parsed.identityId
         val assertionList = parsed.assertionList
@@ -85,7 +86,7 @@ class ArgosXMLTest {
 
     @Test
     fun testTranslationAssertions() {
-        val parsed = ArgosXML().parse(FileInputStream(translationXmlFile))
+        val parsed = ArgosXML.parse(FileInputStream(translationXmlFile))
 
         val identityId = parsed.identityId
         val assertionList = parsed.assertionList
@@ -108,7 +109,7 @@ class ArgosXMLTest {
 
     @Test
     fun testSentimentAssertion() {
-        val parsed = ArgosXML().parse(FileInputStream(sentimentXmlFile))
+        val parsed = ArgosXML.parse(FileInputStream(sentimentXmlFile))
 
         val identityId = parsed.identityId
         val assertionList = parsed.assertionList
@@ -125,8 +126,27 @@ class ArgosXMLTest {
     }
 
     @Test
+    fun testImageSimilarityAssertion() {
+        val parsed = ArgosXML.parse(FileInputStream(imageSimilarityXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if (assertion is ImageSimilarityAssertion) {
+                Assertions.assertEquals("url1", assertion.spec.image1)
+                Assertions.assertEquals("url2", assertion.spec.image2)
+                Assertions.assertEquals(0.9f, assertion.spec.threshold)
+            }
+        }
+    }
+
+    @Test
     fun testConversationAssertions() {
-        val parsed = ArgosXML().parse(FileInputStream(conversationXmlFile))
+        val parsed = ArgosXML.parse(FileInputStream(conversationXmlFile))
 
         val identityId = parsed.identityId
         val assertionList = parsed.assertionList
