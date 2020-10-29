@@ -144,25 +144,4 @@ class ArgosXMLTest {
         }
     }
 
-    @Test
-    fun testConversationAssertions() {
-        val parsed = ArgosXML.parse(FileInputStream(conversationXmlFile))
-
-        val identityId = parsed.identityId
-        val assertionList = parsed.assertionList
-
-        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
-        Assertions.assertEquals(1, assertionList.size)
-
-        for (assertion in assertionList) {
-            if (assertion is ConversationAssertion) {
-                Assertions.assertTrue(
-                        assertion.spec.elements.filterIsInstance<Conversation.GaiaInteraction>().size == 25)
-                Assertions.assertTrue(
-                        assertion.spec.elements.filterIsInstance<Conversation.UserInteraction>().size == 14)
-
-                assertion.spec.elements.forEach { it.printElement() }
-            }
-        }
-    }
 }

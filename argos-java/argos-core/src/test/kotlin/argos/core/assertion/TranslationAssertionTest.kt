@@ -1,10 +1,6 @@
 package argos.core.assertion
 
-import argos.api.ArgosOptions
-import argos.api.Error
-import argos.api.Failure
-import argos.api.IAssertionResult
-import argos.api.Success
+import argos.api.*
 import gaia.sdk.HMACCredentials
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
@@ -44,18 +40,6 @@ class TranslationAssertionTest {
 
         Assertions.assertFalse(result.isEmpty.blockingGet())
         Assertions.assertTrue(result.blockingFirst() is Failure)
-
-        printResult(result)
-    }
-
-    @Test
-    fun testError() {
-        initResultType(Error(Throwable()))
-
-        val result = Flowable.fromPublisher(TranslationAssertion(spec).assert(options))
-
-        Assertions.assertFalse(result.isEmpty.blockingGet())
-        Assertions.assertTrue(result.blockingFirst() is Error)
 
         printResult(result)
     }

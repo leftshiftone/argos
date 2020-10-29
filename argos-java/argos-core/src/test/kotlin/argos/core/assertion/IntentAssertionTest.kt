@@ -47,18 +47,6 @@ class IntentAssertionTest {
         printResult(result)
     }
 
-    @Test
-    fun testError() {
-        initResultType(argos.api.Error(Throwable()))
-
-        val result = Flowable.fromPublisher(IntentAssertion(spec).assert(options))
-
-        Assertions.assertFalse(result.isEmpty.blockingGet())
-        Assertions.assertTrue(result.blockingFirst() is argos.api.Error)
-
-        printResult(result)
-    }
-
     @BeforeEach
     fun initMock() {
         mockkObject(Gaia)

@@ -46,18 +46,6 @@ class SimilarityAssertionTest {
         printResult(result)
     }
 
-    @Test
-    fun testError() {
-        initResultType(argos.api.Error(Throwable()))
-
-        val result = Flowable.fromPublisher(SimilarityAssertion(spec).assert(options))
-
-        Assertions.assertFalse(result.isEmpty.blockingGet())
-        Assertions.assertTrue(result.blockingFirst() is argos.api.Error)
-
-        printResult(result)
-    }
-
     @BeforeEach
     fun initMocks() {
         mockkObject(Gaia)

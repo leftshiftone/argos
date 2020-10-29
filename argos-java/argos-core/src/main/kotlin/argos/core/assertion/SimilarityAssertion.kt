@@ -14,19 +14,13 @@ class SimilarityAssertion(val spec: SimilarityAssertionSpec) : IAssertion {
         val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
                 .evaluate(mapOf("text1" to spec.text1, "text2" to spec.text2))
 
-        val result = Flowable.fromPublisher(request).map { it.asMap() }
+        return Flowable.fromPublisher(request).map { it.asMap() }
                 .map { e ->
-                    try {
-                        val score = e.get("score")!!
-                        if (score is Float && score >= spec.threshold)
-                            Success("success")
-                        else
-                            Failure("failure")
-                    } catch (ex: Throwable) {
-                        Error(ex)
-                    }
+                    val score = e["score"] ?: 0.0
+                    if (score is Float && score >= spec.threshold)
+                        Success("success")
+                    else
+                        Failure("failure")
                 }
-
-        return result
     }
 }

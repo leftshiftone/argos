@@ -6,6 +6,7 @@ import argos.api.IAssertion
 import argos.api.IAssertionResult
 import argos.core.assertion.*
 import argos.core.augmenter.QwertzAugmenter
+import argos.runtime.dsl.config.Conversation
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 import java.util.concurrent.CopyOnWriteArrayList
@@ -58,6 +59,11 @@ class ArgosDSL private constructor(private val name: String, private val options
         assertions.add(SimilarityAssertion(SimilarityAssertionSpec(text1, text2, threshold)))
     }
 
+    fun assertConversation(config: Conversation.() -> Unit) {
+        val conv = Conversation().apply(config)
+        assertions.add(ConversationAssertion(ConversationAssertionSpec(conv.participants, conv.attributes)))
+    }
+
     fun assertNer(text: String, action: NER.() -> Unit) {
         val entity = NER()
         action(entity)
@@ -96,21 +102,6 @@ class ArgosDSL private constructor(private val name: String, private val options
     @JvmOverloads
     fun assertImageSimilarity(image1: String, image2: String, threshold: Float = 0.9f) {
         assertions.add(ImageSimilarityAssertion(ImageSimilarityAssertionSpec(image1, image2, threshold)))
-    }
-
-    fun assertConversation(action: Conversation.() -> Unit) {
-        val conversationElements = Conversation()
-        action(conversationElements)
-        assertions.add(ConversationAssertion(ConversationAssertionSpec(conversationElements)))
-    }
-
-    class Conversation: ArrayList<argos.core.assertion.Conversation.Element>() {
-        fun gaia(vararg properties: argos.core.assertion.Conversation.Property) {
-            add(argos.core.assertion.Conversation.GaiaInteraction(properties.toList()))
-        }
-        fun user(vararg properties: argos.core.assertion.Conversation.Property) {
-            add(argos.core.assertion.Conversation.UserInteraction(properties.toList()))
-        }
     }
 
     // TODO: javadoc

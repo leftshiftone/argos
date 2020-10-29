@@ -1,3 +1,5 @@
 package argos.core.assertion
 
-data class ConversationAssertionSpec(val elements: ArrayList<Conversation.Element>)
+import argos.core.conversation.AbstractParticipant
+
+data class ConversationAssertionSpec(val participants: List<AbstractParticipant>, val attributes: Map<String, Any>)

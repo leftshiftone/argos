@@ -1,7 +1,7 @@
 package argos.runtime.dsl
 
-import argos.api.*
-import argos.core.assertion.Conversation
+import argos.api.ArgosOptions
+import argos.api.Success
 import gaia.sdk.HMACCredentials
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.reactivestreams.Publisher
 
 class ArgosDSLTest {
     private val options = ArgosOptions("", GaiaConfig("", HMACCredentials("", "")))
@@ -104,23 +103,6 @@ class ArgosDSLTest {
         val type = Flowable.fromPublisher(result).blockingFirst()
 
         Assertions.assertTrue(type is Success)
-    }
-
-    @Test
-    fun testConversation() {
-        ArgosDSL.argos("argos test", options) {
-            assertConversation {
-                gaia(
-                        Conversation.Property.Text(textContent = "Hallo, ich bin Ihr digitaler UBIT-Assistent. Wollen Sie Ihren Digitalisierungs-Index in 7 Minuten ermitteln oder wollen Sie direkt einen UBIT-Profi über die Trendit Roadmap suchen?"),
-                        Conversation.Property.Button(name = "result", value = "digicheck", textContent = "Ermittle Digitalisierungs-Index"),
-                        Conversation.Property.Button(name = "result", value = "prozess", textContent = "Suche UBIT-Profi"))
-                user(
-                        Conversation.Property.Button(position = "right", value = "digicheck", name = "result", textContent = "Ermittle Digitalisierungs-Index"))
-
-                this.forEach { it.printElement() }
-            }
-        }
-
     }
 
     @BeforeEach

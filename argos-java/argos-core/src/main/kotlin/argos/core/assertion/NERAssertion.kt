@@ -5,7 +5,6 @@ import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
-import java.lang.Exception
 
 class NERAssertion(val spec: NERAssertionSpec): IAssertion {
 
@@ -15,28 +14,26 @@ class NERAssertion(val spec: NERAssertionSpec): IAssertion {
         val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
                 .evaluate(mapOf("text" to spec.text))
 
-        val result = Flowable.fromPublisher(request)
+        return Flowable.fromPublisher(request)
                 .map { it.asMap() }
                 .map { e ->
-                    try {
-                        val nerResult = e.get("ner")
-                        if (nerResult !is List<*>) throw Exception("Format Error")
+                    val nerResult = e["ner"]
 
-                        for (ner in nerResult) {
-                            if (ner !is Map<*,*>) throw Exception("Format Error")
+                    if (nerResult !is List<*>) return@map Failure("Format Error")
 
-                            for (entity in spec.entities) {
-                                if (ner.get("label")!!.equals(entity.label) && !entity.not)
-                                    return@map Success("success")
-                            }
+                    for (ner in nerResult) {
+                        if (ner !is Map<*,*>) return@map Failure("Format Error")
+
+                        for (entity in spec.entities) {
+                            val label = ner["label"] ?: ""
+
+                            if (label != entity.label)
+                                return@map Failure("Entity mismatch: $entity ($label)")
+                            if (label == entity.label && entity.not)
+                                return@map Failure("Entity mismatch: $entity ($label)")
                         }
-                        Failure("failure")
                     }
-                    catch (ex: Throwable) {
-                        Error(ex)
-                    }
+                    Success("success")
                 }
-
-        return result
     }
 }
