@@ -104,6 +104,18 @@ class ArgosDSL private constructor(private val name: String, private val options
         assertions.add(ImageSimilarityAssertion(ImageSimilarityAssertionSpec(image1, image2, threshold)))
     }
 
+    fun assertOCR(image: String, action: OCR.() -> Unit) {
+        val text = OCR()
+        action(text)
+        assertions.add(OCRAssertion(OCRAssertionSpec(image, text)))
+    }
+
+    class OCR: ArrayList<OCRAssertionSpec.Text>() {
+        fun text(text: String, fuzzy: Boolean) {
+            add(OCRAssertionSpec.Text(text, fuzzy))
+        }
+    }
+
     // TODO: javadoc
     fun qwertzAugmentation(text: String, seed: Long? = null): String {
         return QwertzAugmenter(seed).augment(text)

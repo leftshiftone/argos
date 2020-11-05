@@ -15,6 +15,7 @@ class ArgosXMLTest {
     val sentimentXmlFile = File(resourcesPath, "sentimentAssertionTest.xml")
     val imageSimilarityXmlFile = File(resourcesPath, "imageSimilarityAssertionTest.xml")
     val conversationXmlFile = File(resourcesPath, "conversationAssertionTest.xml")
+    val ocrXmlFile = File(resourcesPath, "ocrAssertionTest.xml")
 
     @Test
     fun testIntentAssertions() {
@@ -140,6 +141,27 @@ class ArgosXMLTest {
                 Assertions.assertEquals("url1", assertion.spec.image1)
                 Assertions.assertEquals("url2", assertion.spec.image2)
                 Assertions.assertEquals(0.9f, assertion.spec.threshold)
+            }
+        }
+    }
+
+    @Test
+    fun testOCRAssertion() {
+        val parsed = ArgosXML.parse(FileInputStream(ocrXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if (assertion is OCRAssertion) {
+                Assertions.assertEquals("url_to_image", assertion.spec.image)
+                Assertions.assertEquals(false, assertion.spec.texts[0].fuzzy)
+                Assertions.assertEquals("Das ist ein Beispieltext.", assertion.spec.texts[0].text)
+                Assertions.assertEquals(true, assertion.spec.texts[1].fuzzy)
+                Assertions.assertEquals("Das ist weiterer Beispieltext.", assertion.spec.texts[1].text)
             }
         }
     }

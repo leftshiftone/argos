@@ -1,0 +1,6 @@
+<assertions identityId="16082f40-3043-495a-8833-90fba9d04319">
+    <ocrAssertion image="url_to_image">
+        <text fuzzy="false">Das ist ein Beispieltext.</text>
+        <text fuzzy="true">Das ist weiterer Beispieltext.</text>
+    </ocrAssertion>
+</assertions>

@@ -2,6 +2,7 @@ package argos.runtime.dsl
 
 import argos.api.ArgosOptions
 import argos.api.Success
+import argos.core.assertion.support.ImageSupport
 import gaia.sdk.HMACCredentials
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
@@ -105,13 +106,30 @@ class ArgosDSLTest {
         Assertions.assertTrue(type is Success)
     }
 
+    @Test
+    fun testOCR(){
+        setResponse(mapOf("text" to "Das ist weiterer Beispieltext."))
+
+        val result = ArgosDSL.argos("argos test", options) {
+            assertOCR("image_url") {
+                text("Das ist ein Beispieltext.", false)
+                text("Das ist weiterer Beispieltext.", true)
+            }
+        }
+        val type = Flowable.fromPublisher(result).blockingFirst()
+
+        Assertions.assertTrue(type is Success)
+    }
+
     @BeforeEach
     fun initMock() {
         mockkObject(ArgosDSL)
         mockkObject(Gaia)
+        mockkObject(ImageSupport)
         gaiaRef = mockk()
 
         every { Gaia.connect(options.config) } returns gaiaRef
+        every { ImageSupport.getByteArrayFromImage(any()) } returns ByteArray(4)
     }
 
     @AfterEach
@@ -124,7 +142,7 @@ class ArgosDSLTest {
         confirmVerified(gaiaRef)
     }
 
-    fun setResponse(map: Map<String, Any>) {
+    private fun setResponse(map: Map<String, Any>) {
         every { gaiaRef.skill("").evaluate(any()) } returns Flowable.just(
                 SkillEvaluation(map))
     }
