@@ -16,6 +16,7 @@ class ArgosXMLTest {
     val imageSimilarityXmlFile = File(resourcesPath, "imageSimilarityAssertionTest.xml")
     val conversationXmlFile = File(resourcesPath, "conversationAssertionTest.xml")
     val ocrXmlFile = File(resourcesPath, "ocrAssertionTest.xml")
+    val languageDetectionXmlFile = File(resourcesPath, "languageDetectionAssertionTest.xml")
 
     @Test
     fun testIntentAssertions() {
@@ -162,6 +163,24 @@ class ArgosXMLTest {
                 Assertions.assertEquals("Das ist ein Beispieltext.", assertion.spec.texts[0].text)
                 Assertions.assertEquals(true, assertion.spec.texts[1].fuzzy)
                 Assertions.assertEquals("Das ist weiterer Beispieltext.", assertion.spec.texts[1].text)
+            }
+        }
+    }
+
+    @Test
+    fun testLanguageDetectionAsseriton() {
+        val parsed = ArgosXML.parse(FileInputStream(languageDetectionXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if (assertion is LanguageDetectionAssertion) {
+                Assertions.assertEquals("de", assertion.spec.lang)
+                Assertions.assertEquals("Das ist ein Beispieltext", assertion.spec.text)
             }
         }
     }

@@ -107,7 +107,7 @@ class ArgosDSLTest {
     }
 
     @Test
-    fun testOCR(){
+    fun testOCR() {
         setResponse(mapOf("text" to "Das ist weiterer Beispieltext."))
 
         val result = ArgosDSL.argos("argos test", options) {
@@ -115,6 +115,18 @@ class ArgosDSLTest {
                 text("Das ist ein Beispieltext.", false)
                 text("Das ist weiterer Beispieltext.", true)
             }
+        }
+        val type = Flowable.fromPublisher(result).blockingFirst()
+
+        Assertions.assertTrue(type is Success)
+    }
+
+    @Test
+    fun testLanguageDetection() {
+        setResponse(mapOf("lang" to "de"))
+
+        val result = ArgosDSL.argos("argos test", options) {
+            assertLanguageDetection("Das ist ein Beispieltext", "de")
         }
         val type = Flowable.fromPublisher(result).blockingFirst()
 

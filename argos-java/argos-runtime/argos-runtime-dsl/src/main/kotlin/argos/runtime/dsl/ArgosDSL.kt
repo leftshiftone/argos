@@ -116,6 +116,10 @@ class ArgosDSL private constructor(private val name: String, private val options
         }
     }
 
+    fun assertLanguageDetection(text: String, lang: String) {
+        assertions.add(LanguageDetectionAssertion(LanguageDetectionAssertionSpec(text, lang)))
+    }
+
     // TODO: javadoc
     fun qwertzAugmentation(text: String, seed: Long? = null): String {
         return QwertzAugmenter(seed).augment(text)
