@@ -27,7 +27,7 @@ class NERAssertion(val spec: NERAssertionSpec): IAssertion {
                         for (entity in spec.entities) {
                             val label = ner["label"] ?: ""
 
-                            if (label != entity.label)
+                            if (label != entity.label && !entity.not)
                                 return@map Failure("Entity mismatch: $entity ($label)")
                             if (label == entity.label && entity.not)
                                 return@map Failure("Entity mismatch: $entity ($label)")
