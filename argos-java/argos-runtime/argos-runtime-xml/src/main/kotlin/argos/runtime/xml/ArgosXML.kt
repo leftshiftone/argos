@@ -4,8 +4,6 @@ import argos.api.IAssertion
 import argos.runtime.xml.strategy.*
 import argos.runtime.xml.support.XmlParser
 import argos.runtime.xml.support.findAttr
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
 
 // TODO: javadoc
@@ -13,12 +11,12 @@ class ArgosXML private constructor() {
     data class ParsedAssertions(val identityId: String, val assertionList: List<IAssertion>)
 
     private val assertions: MutableList<IAssertion> = emptyList<IAssertion>().toMutableList()
-    private val scheme = File("./src/main/resources/argos.xsd")
+    private val scheme = this::class.java.getResourceAsStream("/argos.xsd")!!
 
     companion object {
         fun parse(input: InputStream): ParsedAssertions {
             val xml = ArgosXML()
-            val doc = XmlParser(FileInputStream(xml.scheme)).invoke(input)
+            val doc = XmlParser(xml.scheme).invoke(input)
 
             val identityId: String = doc.getElementsByTagName("assertions").item(0)
                     .findAttr("identityId").get()

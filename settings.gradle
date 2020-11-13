@@ -14,6 +14,7 @@
  * from Leftshift One.
  */
 
+include "argos-java"
 include "argos-java:argos-api"
 include "argos-java:argos-core"
 include "argos-java:argos-runtime:argos-runtime-dsl"

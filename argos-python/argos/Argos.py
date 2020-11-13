@@ -1,21 +1,35 @@
+from pathlib import Path
 from subprocess import *
 
+
 def jarWrapper(*args):
-    process = Popen(['java', '-jar']+list(args), stdout=PIPE, stderr=PIPE)
+    process = Popen(['java', '-jar'] + list(args), stdout=PIPE, stderr=PIPE)
     ret = []
     while process.poll() is None:
         line = process.stdout.readline()
-        if line != '' and line.endswith('\n'):
+        if line != '' and line.endswith(b'\n'):
             ret.append(line[:-1])
     stdout, stderr = process.communicate()
-    ret += stdout.split('\n')
+    ret += stdout.split(b'\n')
     if stderr != '':
-        ret += stderr.split('\n')
-    ret.remove('')
+        ret += stderr.split(b'\n')
+    ret.remove(b'')
     return ret
 
-args = ['myJarFile.jar', 'arg1', 'arg2', 'argN'] # Any number of args to be passed to the jar file
+
+jar_path = Path("resources/argos-java.jar")
+args = [jar_path]  # Any number of args to be passed to the jar file
+
+# # args -> XML
+args.append(Path("tests/resources/intentAssertionTest.xml"))
+
+# # args -> DSL
+# args.append(Path("tests/resources/assertionDSLTest.kts"))
+
+print(args, "\n")
 
 result = jarWrapper(*args)
 
-print(result)
+for out in result:
+    out = out.decode()
+    print(out)

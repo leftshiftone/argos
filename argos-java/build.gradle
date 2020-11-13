@@ -1,0 +1,26 @@
+dependencies {
+    api project(":argos-java:argos-api")
+    api project(":argos-java:argos-core")
+    api project(":argos-java:argos-runtime:argos-runtime-dsl")
+    api project(":argos-java:argos-runtime:argos-runtime-xml")
+
+    repositories {
+        maven {
+            setUrl("https://dl.bintray.com/s1m0nw1/KtsRunner")
+        }
+    }
+    compile("de.swirtz:ktsRunner:0.0.8"){
+        exclude group: "ch.qos.logback", module: "logback-classic"
+    }
+
+}
+jar {
+    from 'resources', {
+        into 'resources'
+    }
+
+    manifest {
+        attributes 'Main-Class': 'argos.Argos'
+    }
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+}
