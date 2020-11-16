@@ -124,6 +124,10 @@ class ArgosDSL private constructor(private val name: String, private val options
         assertions.add(ClassificationAssertion(ClassificationAssertionSpec(text, `class`)))
     }
 
+    fun assertRegression(text: String, score: Float) {
+        assertions.add(RegressionAssertion(RegressionAssertionSpec(text, score)))
+    }
+
     // TODO: javadoc
     fun qwertzAugmentation(text: String, seed: Long? = null): String {
         return QwertzAugmenter(seed).augment(text)

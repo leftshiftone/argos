@@ -69,6 +69,10 @@ class ArgosTest {
         testMain(arrayOf(
                 "assertClassification(\"Text\", \"customClass\")"), ClassificationAssertion::class)
     }
+    @Test fun testRegressionAssertionDSL() {
+        testMain(arrayOf(
+                "assertRegression(\"Text\", 90f)"), RegressionAssertion::class)
+    }
 
     private fun testMain(args: Array<String>, assertionType: KClass<out IAssertion>) {
         fun setResponse(map: Map<String, Any>) {
@@ -81,6 +85,7 @@ class ArgosTest {
             TranslationAssertion::class -> setResponse(mapOf("text" to "i am looking for a lawyer", "lang" to "en"))
             SentimentAssertion::class -> setResponse(mapOf("type" to "neutral"))
             ClassificationAssertion::class -> setResponse(mapOf("class" to "customClass"))
+            RegressionAssertion::class -> setResponse(mapOf("score" to 90f))
         }
         Argos.main(args)
     }

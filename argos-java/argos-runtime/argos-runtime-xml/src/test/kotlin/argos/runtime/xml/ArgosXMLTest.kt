@@ -18,6 +18,7 @@ class ArgosXMLTest {
     val ocrXmlFile = File(resourcesPath, "ocrAssertionTest.xml")
     val languageDetectionXmlFile = File(resourcesPath, "languageDetectionAssertionTest.xml")
     val classificationXmlFile = File(resourcesPath, "classificationAssertionTest.xml")
+    val regressionXmlFile = File(resourcesPath, "regressionAssertionTest.xml")
 
     @Test
     fun testIntentAssertions() {
@@ -200,6 +201,24 @@ class ArgosXMLTest {
             if (assertion is ClassificationAssertion) {
                 Assertions.assertEquals("Text", assertion.spec.text)
                 Assertions.assertEquals("customClass", assertion.spec.`class`)
+            }
+        }
+    }
+
+    @Test
+    fun testRegressionAssertion() {
+        val parsed = ArgosXML.parse(FileInputStream(regressionXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if (assertion is RegressionAssertion) {
+                Assertions.assertEquals("Text", assertion.spec.text)
+                Assertions.assertEquals(90f, assertion.spec.score)
             }
         }
     }

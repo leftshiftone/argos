@@ -145,6 +145,18 @@ class ArgosDSLTest {
         Assertions.assertTrue(type is Success)
     }
 
+    @Test
+    fun testRegression() {
+        setResponse(mapOf("score" to 90f))
+
+        val result = ArgosDSL.argos("argos test", options) {
+            assertRegression("Text", 90f)
+        }
+        val type = Flowable.fromPublisher(result).blockingFirst()
+
+        Assertions.assertTrue(type is Success)
+    }
+
     @BeforeEach
     fun initMock() {
         mockkObject(ArgosDSL)
