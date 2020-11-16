@@ -2,7 +2,7 @@ package argos.runtime.dsl
 
 import argos.api.ArgosOptions
 import argos.api.Success
-import argos.core.assertion.support.ImageSupport
+import argos.core.support.ImageSupport
 import gaia.sdk.HMACCredentials
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
@@ -127,6 +127,18 @@ class ArgosDSLTest {
 
         val result = ArgosDSL.argos("argos test", options) {
             assertLanguageDetection("Das ist ein Beispieltext", "de")
+        }
+        val type = Flowable.fromPublisher(result).blockingFirst()
+
+        Assertions.assertTrue(type is Success)
+    }
+
+    @Test
+    fun testClassification() {
+        setResponse(mapOf("class" to "customClass"))
+
+        val result = ArgosDSL.argos("argos test", options) {
+            assertClassification("Text", "customClass")
         }
         val type = Flowable.fromPublisher(result).blockingFirst()
 

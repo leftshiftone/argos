@@ -1,4 +1,4 @@
-package argos.core.assertion.support
+package argos.core.support
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

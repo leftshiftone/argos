@@ -1,4 +1,4 @@
-package argos.core.assertion.support
+package argos.core.support
 
 import java.io.ByteArrayOutputStream
 import java.net.URL

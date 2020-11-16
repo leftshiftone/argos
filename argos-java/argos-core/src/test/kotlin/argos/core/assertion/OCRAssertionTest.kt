@@ -2,7 +2,7 @@ package argos.core.assertion
 
 import argos.api.Failure
 import argos.api.Success
-import argos.core.assertion.support.ImageSupport
+import argos.core.support.ImageSupport
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockkObject

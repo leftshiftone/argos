@@ -1,7 +1,7 @@
 package argos.core.assertion
 
 import argos.api.*
-import argos.core.assertion.support.ImageSupport
+import argos.core.support.ImageSupport
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
 import io.reactivex.Flowable

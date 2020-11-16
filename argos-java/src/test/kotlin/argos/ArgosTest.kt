@@ -65,6 +65,10 @@ class ArgosTest {
         testMain(arrayOf(
                 "assertSentiment(\"ich suche einen anwalt\",\"neutral\")"), SentimentAssertion::class)
     }
+    @Test fun testClassificationAssertionDSL() {
+        testMain(arrayOf(
+                "assertClassification(\"Text\", \"customClass\")"), ClassificationAssertion::class)
+    }
 
     private fun testMain(args: Array<String>, assertionType: KClass<out IAssertion>) {
         fun setResponse(map: Map<String, Any>) {
@@ -76,6 +80,7 @@ class ArgosTest {
             NERAssertion::class -> setResponse(mapOf("ner" to listOf(mapOf("text" to "steiermark", "label" to "location"))))
             TranslationAssertion::class -> setResponse(mapOf("text" to "i am looking for a lawyer", "lang" to "en"))
             SentimentAssertion::class -> setResponse(mapOf("type" to "neutral"))
+            ClassificationAssertion::class -> setResponse(mapOf("class" to "customClass"))
         }
         Argos.main(args)
     }

@@ -13,6 +13,7 @@
       <xs:element type="conversationAssertionType" name="conversationAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="ocrAssertionType" name="ocrAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="languageDetectionAssertionType" name="languageDetectionAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="classificationAssertionType" name="classificationAssertion" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="identityId"/>
   </xs:complexType>
@@ -107,6 +108,15 @@
     <xs:simpleContent>
       <xs:extension base="xs:string">
         <xs:attribute type="xs:string" name="lang"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+<!--  Classification Assertion -->
+  <xs:complexType name="classificationAssertionType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="class"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
