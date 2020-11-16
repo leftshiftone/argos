@@ -1,6 +1,7 @@
 package argos.runtime.xml
 
 import argos.core.assertion.*
+import io.mockk.spyk
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -19,6 +20,7 @@ class ArgosXMLTest {
     val languageDetectionXmlFile = File(resourcesPath, "languageDetectionAssertionTest.xml")
     val classificationXmlFile = File(resourcesPath, "classificationAssertionTest.xml")
     val regressionXmlFile = File(resourcesPath, "regressionAssertionTest.xml")
+    val imageXmlFile = File(resourcesPath, "imageAssertionTest.xml")
 
     @Test
     fun testIntentAssertions() {
@@ -219,6 +221,25 @@ class ArgosXMLTest {
             if (assertion is RegressionAssertion) {
                 Assertions.assertEquals("Text", assertion.spec.text)
                 Assertions.assertEquals(90f, assertion.spec.score)
+            }
+        }
+    }
+
+    @Test
+    fun testImageAssertion() {
+        val parsed = ArgosXML.parse(FileInputStream(imageXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if (assertion is ImageAssertion) {
+                Assertions.assertEquals("image-upscaling", assertion.spec.skill)
+                Assertions.assertEquals("url", assertion.spec.source)
+                Assertions.assertEquals("url", assertion.spec.target)
             }
         }
     }

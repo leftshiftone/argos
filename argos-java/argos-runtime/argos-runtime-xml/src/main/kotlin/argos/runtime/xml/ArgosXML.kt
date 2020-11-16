@@ -31,6 +31,7 @@ class ArgosXML private constructor() {
             val languageDetectionAssertions = doc.getElementsByTagName("languageDetectionAssertion")
             val classificationAssertions = doc.getElementsByTagName("classificationAssertion")
             val regressionAssertions = doc.getElementsByTagName("regressionAssertion")
+            val imageAssertions = doc.getElementsByTagName("imageAssertion")
 
             xml.assertions.addAll(TranslationAssertionParser().parse(translationAssertions))
             xml.assertions.addAll(NERAssertionsParser().parse(nerAssertions))
@@ -43,6 +44,7 @@ class ArgosXML private constructor() {
             xml.assertions.addAll(LanguageDetectionParser().parse(languageDetectionAssertions))
             xml.assertions.addAll(ClassificationAssertionParser().parse(classificationAssertions))
             xml.assertions.addAll(RegressionAssertionParser().parse(regressionAssertions))
+            xml.assertions.addAll(ImageAssertionParser().parse(imageAssertions))
 
             return ParsedAssertions(identityId, xml.assertions)
         }

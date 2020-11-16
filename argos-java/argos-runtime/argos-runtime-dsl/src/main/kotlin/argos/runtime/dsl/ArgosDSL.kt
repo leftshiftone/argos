@@ -128,6 +128,10 @@ class ArgosDSL private constructor(private val name: String, private val options
         assertions.add(RegressionAssertion(RegressionAssertionSpec(text, score)))
     }
 
+    fun assertImage(skill: String, source: String, target: String) {
+        assertions.add(ImageAssertion(ImageAssertionSpec(skill, source, target)))
+    }
+
     // TODO: javadoc
     fun qwertzAugmentation(text: String, seed: Long? = null): String {
         return QwertzAugmenter(seed).augment(text)

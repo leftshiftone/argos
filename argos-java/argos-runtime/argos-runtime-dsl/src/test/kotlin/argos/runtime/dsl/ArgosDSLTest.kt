@@ -157,6 +157,19 @@ class ArgosDSLTest {
         Assertions.assertTrue(type is Success)
     }
 
+    @Test
+    fun testImage() {
+        val exampleImage = "https://via.placeholder.com/150.jpg"
+        setResponse(mapOf("image" to ImageSupport.getByteArrayFromImage(exampleImage)))
+
+        val result = ArgosDSL.argos("argos test", options) {
+            assertImage("image-upscaling", exampleImage, exampleImage)
+        }
+        val type = Flowable.fromPublisher(result).blockingFirst()
+
+        Assertions.assertTrue(type is Success)
+    }
+
     @BeforeEach
     fun initMock() {
         mockkObject(ArgosDSL)
