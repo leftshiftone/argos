@@ -24,45 +24,10 @@ class Argos {
             val ret: MutableList<String> = mutableListOf()
             if(args.isNotEmpty()) {
                 args.forEach { arg ->
-                    if (arg.endsWith(".xml")) {
-                        val parsedAssertions = ArgosXML.parse(FileInputStream(File(arg)))
-                        val options = ArgosOptions(parsedAssertions.identityId, GaiaConfig("", HMACCredentials("", "")))
-
-                        parsedAssertions.assertionList
-                                .map { it.assert(options) }
-                                .forEach { Flowable.fromPublisher(it).blockingForEach { ret.add(it.getMessage())} }
-                    }
-                    else if (arg.endsWith(".kts")) {
-                        setIdeaIoUseFallback()
-                        val scriptReader = Files.newBufferedReader(Paths.get(arg))
-                        val script: Publisher<IAssertionResult> = KtsObjectLoader().load(scriptReader)
-                        Flowable.fromPublisher(script).forEach { ret.add(it.getMessage()) }
-                    }
-                    else {
-                        setIdeaIoUseFallback()
-                        val script: Publisher<IAssertionResult> =
-                                try {
-                                    KtsObjectLoader().load(arg)
-                                } catch (ex: LoadException) {
-                                    try {
-                                        KtsObjectLoader().load(
-                                                "import argos.api.ArgosOptions\n" +
-                                                        "import argos.runtime.dsl.ArgosDSL\n" +
-                                                        "import gaia.sdk.HMACCredentials\n" +
-                                                        "import gaia.sdk.core.GaiaConfig\n" +
-                                                        arg)
-                                    } catch (ex: LoadException) {
-                                        KtsObjectLoader().load(
-                                                "import argos.api.ArgosOptions\n" +
-                                                        "import argos.runtime.dsl.ArgosDSL\n" +
-                                                        "import gaia.sdk.HMACCredentials\n" +
-                                                        "import gaia.sdk.core.GaiaConfig\n" +
-                                                        "ArgosDSL.argos(\"argos test\", ArgosOptions(\"\", " +
-                                                        "GaiaConfig(\"\", HMACCredentials(\"\", \"\")))) { " +
-                                                        arg + "}")
-                                    }
-                                }
-                        Flowable.fromPublisher(script).forEach { ret.add(it.getMessage()) }
+                    when {
+                        arg.endsWith(".xml") -> handleXml(ret, arg)
+                        arg.endsWith(".kts") -> handleDsl(ret, arg)
+                        else -> handleScript(ret, arg)
                     }
                 }
             }
@@ -71,6 +36,53 @@ class Argos {
 
             println(ret.toString())
         }
+
+        // TODO: parse url, apiKey and apiSecret from args
+        private fun handleXml(ret: MutableList<String>, arg: String) {
+            val parsedAssertions = ArgosXML.parse(FileInputStream(File(arg)))
+            val options = ArgosOptions(parsedAssertions.identityId, GaiaConfig("", HMACCredentials("", "")))
+
+            parsedAssertions.assertionList
+                    .map { it.assert(options) }
+                    .forEach { Flowable.fromPublisher(it).blockingForEach { ret.add(it.getMessage())} }
+        }
+
+        // TODO: parse url, apiKey and apiSecret from args
+        private fun handleDsl(ret: MutableList<String>, arg: String) {
+            setIdeaIoUseFallback()
+            val scriptReader = Files.newBufferedReader(Paths.get(arg))
+            val script: Publisher<IAssertionResult> = KtsObjectLoader().load(scriptReader)
+            Flowable.fromPublisher(script).forEach { ret.add(it.getMessage()) }
+        }
+
+        // TODO: parse url, apiKey and apiSecret from args
+        private fun handleScript(ret: MutableList<String>, arg: String) {
+            setIdeaIoUseFallback()
+            val script: Publisher<IAssertionResult> =
+                    try {
+                        KtsObjectLoader().load(arg)
+                    } catch (ex: LoadException) {
+                        try {
+                            KtsObjectLoader().load(
+                                    "import argos.api.ArgosOptions\n" +
+                                            "import argos.runtime.dsl.ArgosDSL\n" +
+                                            "import gaia.sdk.HMACCredentials\n" +
+                                            "import gaia.sdk.core.GaiaConfig\n" +
+                                            arg)
+                        } catch (ex: LoadException) {
+                            KtsObjectLoader().load(
+                                    "import argos.api.ArgosOptions\n" +
+                                            "import argos.runtime.dsl.ArgosDSL\n" +
+                                            "import gaia.sdk.HMACCredentials\n" +
+                                            "import gaia.sdk.core.GaiaConfig\n" +
+                                            "ArgosDSL.argos(\"argos test\", ArgosOptions(\"\", " +
+                                            "GaiaConfig(\"\", HMACCredentials(\"\", \"\")))) { " +
+                                            arg + "}")
+                        }
+                    }
+            Flowable.fromPublisher(script).forEach { ret.add(it.getMessage()) }
+        }
+
     }
 
 }
