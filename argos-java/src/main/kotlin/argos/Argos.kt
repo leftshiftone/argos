@@ -18,6 +18,9 @@ import java.nio.file.Paths
 class Argos {
 
     companion object {
+        private var url: String = ""
+        private var key: String = ""
+        private var secret: String = ""
 
         @JvmStatic
         fun main(args:Array<String>) {
@@ -25,6 +28,9 @@ class Argos {
             if(args.isNotEmpty()) {
                 args.forEach { arg ->
                     when {
+                        arg.startsWith("url=") -> url = arg.substringAfter("url=")
+                        arg.startsWith("key=") -> key = arg.substringAfter("key=")
+                        arg.startsWith("secret=") -> secret = arg.substringAfter("secret=")
                         arg.endsWith(".xml") -> handleXml(ret, arg)
                         arg.endsWith(".kts") -> handleDsl(ret, arg)
                         else -> handleScript(ret, arg)
@@ -37,17 +43,15 @@ class Argos {
             println(ret.toString())
         }
 
-        // TODO: parse url, apiKey and apiSecret from args
         private fun handleXml(ret: MutableList<String>, arg: String) {
             val parsedAssertions = ArgosXML.parse(FileInputStream(File(arg)))
-            val options = ArgosOptions(parsedAssertions.identityId, GaiaConfig("", HMACCredentials("", "")))
+            val options = ArgosOptions(parsedAssertions.identityId, GaiaConfig(url, HMACCredentials(key, secret)))
 
             parsedAssertions.assertionList
                     .map { it.assert(options) }
                     .forEach { Flowable.fromPublisher(it).blockingForEach { ret.add(it.getMessage())} }
         }
 
-        // TODO: parse url, apiKey and apiSecret from args
         private fun handleDsl(ret: MutableList<String>, arg: String) {
             setIdeaIoUseFallback()
             val scriptReader = Files.newBufferedReader(Paths.get(arg))
@@ -55,7 +59,6 @@ class Argos {
             Flowable.fromPublisher(script).forEach { ret.add(it.getMessage()) }
         }
 
-        // TODO: parse url, apiKey and apiSecret from args
         private fun handleScript(ret: MutableList<String>, arg: String) {
             setIdeaIoUseFallback()
             val script: Publisher<IAssertionResult> =
@@ -76,7 +79,7 @@ class Argos {
                                             "import gaia.sdk.HMACCredentials\n" +
                                             "import gaia.sdk.core.GaiaConfig\n" +
                                             "ArgosDSL.argos(\"argos test\", ArgosOptions(\"\", " +
-                                            "GaiaConfig(\"\", HMACCredentials(\"\", \"\")))) { " +
+                                            "GaiaConfig(\"$url\", HMACCredentials(\"$key\", \"$secret\")))) { " +
                                             arg + "}")
                         }
                     }
