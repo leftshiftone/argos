@@ -21,6 +21,7 @@ class ArgosXMLTest {
     val classificationXmlFile = File(resourcesPath, "classificationAssertionTest.xml")
     val regressionXmlFile = File(resourcesPath, "regressionAssertionTest.xml")
     val imageXmlFile = File(resourcesPath, "imageAssertionTest.xml")
+    val text2speechXmlFile = File(resourcesPath, "text2speechAssertionTest.xml")
 
     @Test
     fun testIntentAssertions() {
@@ -240,6 +241,24 @@ class ArgosXMLTest {
                 Assertions.assertEquals("image-upscaling", assertion.spec.skill)
                 Assertions.assertEquals("url", assertion.spec.source)
                 Assertions.assertEquals("url", assertion.spec.target)
+            }
+        }
+    }
+
+    @Test
+    fun testText2SpeechAssertion() {
+        val parsed = ArgosXML.parse(FileInputStream(text2speechXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if (assertion is Text2SpeechAssertion) {
+                Assertions.assertEquals("Text", assertion.spec.text)
+                Assertions.assertEquals("url-to-speech", assertion.spec.speech)
             }
         }
     }

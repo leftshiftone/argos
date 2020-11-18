@@ -2,6 +2,7 @@ package argos
 
 import argos.api.IAssertion
 import argos.core.assertion.*
+import argos.core.support.FileSupport
 import argos.core.support.ImageSupport
 import com.sun.org.apache.xpath.internal.Arg
 import gaia.sdk.api.skill.SkillEvaluation
@@ -124,6 +125,12 @@ class ArgosTest {
                 ImageAssertion::class)
     }
 
+    @Test
+    fun testText2Speech() {
+        testMain(arrayOf(*testArgs,
+                "assertText2Speech(\"Test\", \"example.wav\")"), Text2SpeechAssertion::class)
+    }
+
     private fun testMain(args: Array<String>, assertionType: KClass<out IAssertion>) {
         fun setResponse(map: Map<String, Any>) {
             every { gaiaRef.skill("test_url").evaluate(any()) } returns Flowable.just(SkillEvaluation(map))
@@ -140,6 +147,7 @@ class ArgosTest {
             ClassificationAssertion::class -> setResponse(mapOf("class" to "customClass"))
             RegressionAssertion::class -> setResponse(mapOf("score" to 90f))
             ImageAssertion::class -> setResponse(mapOf("image" to ImageSupport.getByteArrayFromImage("https://via.placeholder.com/150.jpg")))
+            Text2SpeechAssertion::class -> setResponse(mapOf("speech" to ByteArray(4)))
         }
         println("Args: ${args.asList()}")
         Argos.main(args)
@@ -149,7 +157,9 @@ class ArgosTest {
     private fun initMock() {
         mockkObject(Gaia)
         gaiaRef = mockk()
+        mockkObject(FileSupport)
         every { Gaia.connect(ofType()) } returns gaiaRef
+        every { FileSupport.getByteArrayFromFile(ofType()) } returns ByteArray(4)
     }
 
     @AfterEach

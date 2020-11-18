@@ -2,6 +2,7 @@ package argos.runtime.dsl
 
 import argos.api.ArgosOptions
 import argos.api.Success
+import argos.core.support.FileSupport
 import argos.core.support.ImageSupport
 import gaia.sdk.HMACCredentials
 import gaia.sdk.api.skill.SkillEvaluation
@@ -108,10 +109,11 @@ class ArgosDSLTest {
 
     @Test
     fun testOCR() {
+        val exampleImage = "https://via.placeholder.com/150.jpg"
         setResponse(mapOf("text" to "Das ist weiterer Beispieltext."))
 
         val result = ArgosDSL.argos("argos test", options) {
-            assertOCR("image_url") {
+            assertOCR(exampleImage) {
                 text("Das ist ein Beispieltext.", false)
                 text("Das ist weiterer Beispieltext.", true)
             }
@@ -170,15 +172,25 @@ class ArgosDSLTest {
         Assertions.assertTrue(type is Success)
     }
 
+    @Test
+    fun testText2Speech() {
+        val exampleWAV = "../../argos-core/src/test/resources/placeholder.wav"
+        setResponse(mapOf("speech" to FileSupport.getByteArrayFromFile(exampleWAV)))
+        val result = ArgosDSL.argos("argos test", options) {
+            assertText2Speech("Test", exampleWAV)
+        }
+        val type = Flowable.fromPublisher(result).blockingFirst()
+
+        Assertions.assertTrue(type is Success)
+    }
+
     @BeforeEach
     fun initMock() {
         mockkObject(ArgosDSL)
         mockkObject(Gaia)
-        mockkObject(ImageSupport)
         gaiaRef = mockk()
 
         every { Gaia.connect(options.config) } returns gaiaRef
-        every { ImageSupport.getByteArrayFromImage(any()) } returns ByteArray(4)
     }
 
     @AfterEach

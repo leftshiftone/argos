@@ -132,6 +132,10 @@ class ArgosDSL private constructor(private val name: String, private val options
         assertions.add(ImageAssertion(ImageAssertionSpec(skill, source, target)))
     }
 
+    fun assertText2Speech(text: String, speech: String) {
+        assertions.add(Text2SpeechAssertion(Text2SpeechAssertionSpec(text, speech)))
+    }
+
     // TODO: javadoc
     fun qwertzAugmentation(text: String, seed: Long? = null): String {
         return QwertzAugmenter(seed).augment(text)
