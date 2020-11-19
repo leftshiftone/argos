@@ -22,6 +22,7 @@ class ArgosXMLTest {
     val regressionXmlFile = File(resourcesPath, "regressionAssertionTest.xml")
     val imageXmlFile = File(resourcesPath, "imageAssertionTest.xml")
     val text2speechXmlFile = File(resourcesPath, "text2speechAssertionTest.xml")
+    val speech2textXmlFile = File(resourcesPath, "speech2textAssertionTest.xml")
 
     @Test
     fun testIntentAssertions() {
@@ -259,6 +260,24 @@ class ArgosXMLTest {
             if (assertion is Text2SpeechAssertion) {
                 Assertions.assertEquals("Text", assertion.spec.text)
                 Assertions.assertEquals("url-to-speech", assertion.spec.speech)
+            }
+        }
+    }
+
+    @Test
+    fun testSpeech2TextAssertion() {
+        val parsed = ArgosXML.parse(FileInputStream(speech2textXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if (assertion is Speech2TextAssertion) {
+                Assertions.assertEquals("url-to-speech", assertion.spec.speech)
+                Assertions.assertEquals("Text", assertion.spec.text)
             }
         }
     }

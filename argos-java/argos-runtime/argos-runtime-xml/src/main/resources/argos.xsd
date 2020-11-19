@@ -17,6 +17,7 @@
       <xs:element type="regressionAssertionType" name="regressionAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="imageAssertionType" name="imageAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="text2speechAssertionType" name="text2speechAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="speech2textAssertionType" name="speech2textAssertion" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="identityId"/>
   </xs:complexType>
@@ -146,6 +147,15 @@
 
 <!--  Text2Speech Assertion-->
   <xs:complexType name="text2speechAssertionType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="speech"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+<!--  Speech2Text Assertion -->
+  <xs:complexType name="speech2textAssertionType">
     <xs:simpleContent>
       <xs:extension base="xs:string">
         <xs:attribute type="xs:string" name="speech"/>

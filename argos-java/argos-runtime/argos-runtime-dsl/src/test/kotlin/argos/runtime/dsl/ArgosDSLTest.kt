@@ -174,10 +174,20 @@ class ArgosDSLTest {
 
     @Test
     fun testText2Speech() {
-        val exampleWAV = "../../argos-core/src/test/resources/placeholder.wav"
-        setResponse(mapOf("speech" to FileSupport.getByteArrayFromFile(exampleWAV)))
+        setResponse(mapOf("speech" to ByteArray(4)))
         val result = ArgosDSL.argos("argos test", options) {
-            assertText2Speech("Test", exampleWAV)
+            assertText2Speech("Test", "url-to-speech")
+        }
+        val type = Flowable.fromPublisher(result).blockingFirst()
+
+        Assertions.assertTrue(type is Success)
+    }
+
+    @Test
+    fun testSpeech2Text() {
+        setResponse(mapOf("text" to "Text"))
+        val result = ArgosDSL.argos("argos test", options) {
+            assertSpeech2Text("url-to-speech", "Text")
         }
         val type = Flowable.fromPublisher(result).blockingFirst()
 
@@ -188,9 +198,11 @@ class ArgosDSLTest {
     fun initMock() {
         mockkObject(ArgosDSL)
         mockkObject(Gaia)
+        mockkObject(FileSupport)
         gaiaRef = mockk()
 
         every { Gaia.connect(options.config) } returns gaiaRef
+        every { FileSupport.getByteArrayFromFile("url-to-speech") } returns ByteArray(4)
     }
 
     @AfterEach

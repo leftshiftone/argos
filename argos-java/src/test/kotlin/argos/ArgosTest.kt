@@ -128,7 +128,13 @@ class ArgosTest {
     @Test
     fun testText2Speech() {
         testMain(arrayOf(*testArgs,
-                "assertText2Speech(\"Test\", \"example.wav\")"), Text2SpeechAssertion::class)
+                "assertText2Speech(\"Test\", \"url-to-speech\")"), Text2SpeechAssertion::class)
+    }
+
+    @Test
+    fun testSpeech2Text() {
+        testMain(arrayOf(*testArgs,
+                "assertSpeech2Text(\"url-to-speech\", \"Text\")"), Speech2TextAssertion::class)
     }
 
     private fun testMain(args: Array<String>, assertionType: KClass<out IAssertion>) {
@@ -148,6 +154,7 @@ class ArgosTest {
             RegressionAssertion::class -> setResponse(mapOf("score" to 90f))
             ImageAssertion::class -> setResponse(mapOf("image" to ImageSupport.getByteArrayFromImage("https://via.placeholder.com/150.jpg")))
             Text2SpeechAssertion::class -> setResponse(mapOf("speech" to ByteArray(4)))
+            Speech2TextAssertion::class -> setResponse(mapOf("text" to "Text"))
         }
         println("Args: ${args.asList()}")
         Argos.main(args)
