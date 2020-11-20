@@ -18,6 +18,7 @@
       <xs:element type="imageAssertionType" name="imageAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="text2speechAssertionType" name="text2speechAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="speech2textAssertionType" name="speech2textAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="semanticSearchAssertionType" name="semanticSearchAssertion" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="identityId"/>
   </xs:complexType>
@@ -161,6 +162,23 @@
         <xs:attribute type="xs:string" name="speech"/>
       </xs:extension>
     </xs:simpleContent>
+  </xs:complexType>
+
+<!--  Semantic Search Assertion -->
+  <xs:complexType name="entryType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="id"/>
+        <xs:attribute type="xs:string" name="score"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="semanticSearchAssertionType">
+    <xs:sequence>
+      <xs:element type="entryType" name="entry" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="text"/>
+    <xs:attribute type="xs:string" name="topN"/>
   </xs:complexType>
   
 <!--  Conversation Assertion -->

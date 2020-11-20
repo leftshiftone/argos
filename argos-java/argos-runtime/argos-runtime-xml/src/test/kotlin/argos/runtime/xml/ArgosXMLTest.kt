@@ -23,6 +23,7 @@ class ArgosXMLTest {
     val imageXmlFile = File(resourcesPath, "imageAssertionTest.xml")
     val text2speechXmlFile = File(resourcesPath, "text2speechAssertionTest.xml")
     val speech2textXmlFile = File(resourcesPath, "speech2textAssertionTest.xml")
+    val semanticSearchXmlFile = File(resourcesPath, "semanticSearchAssertionTest.xml")
 
     @Test
     fun testIntentAssertions() {
@@ -278,6 +279,32 @@ class ArgosXMLTest {
             if (assertion is Speech2TextAssertion) {
                 Assertions.assertEquals("url-to-speech", assertion.spec.speech)
                 Assertions.assertEquals("Text", assertion.spec.text)
+            }
+        }
+    }
+
+    @Test
+    fun testSemanticSearchAssertion() {
+        val parsed = ArgosXML.parse(FileInputStream(semanticSearchXmlFile))
+
+        val identityId = parsed.identityId
+        val assertionList = parsed.assertionList
+
+        Assertions.assertEquals("16082f40-3043-495a-8833-90fba9d04319", identityId)
+        Assertions.assertEquals(1, assertionList.size)
+
+        for (assertion in assertionList) {
+            if (assertion is SemanticSearchAssertion) {
+                Assertions.assertEquals("", assertion.spec.text)
+                Assertions.assertEquals(2, assertion.spec.topN)
+
+                Assertions.assertEquals(2, assertion.spec.entries.size)
+
+                Assertions.assertEquals("document1", assertion.spec.entries[0].id)
+                Assertions.assertEquals(0.9f, assertion.spec.entries[0].score)
+
+                Assertions.assertEquals("document2", assertion.spec.entries[1].id)
+                Assertions.assertEquals(0.8f, assertion.spec.entries[1].score)
             }
         }
     }

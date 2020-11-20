@@ -194,6 +194,23 @@ class ArgosDSLTest {
         Assertions.assertTrue(type is Success)
     }
 
+    @Test
+    fun testSemanticSearch() {
+        setResponse(mapOf("message" to mapOf(
+                        "results" to arrayOf(
+                                mapOf("id" to "document1", "score" to 0.9f),
+                                mapOf("id" to "document2", "score" to 0.8f)))))
+        val result = ArgosDSL.argos("argos test", options) {
+            assertSemanticSearch("text", 2) {
+                entry("document1", 0.9f)
+                entry("document2", 0.8f)
+            }
+        }
+        val type = Flowable.fromPublisher(result).blockingFirst()
+
+        Assertions.assertTrue(type is Success)
+    }
+
     @BeforeEach
     fun initMock() {
         mockkObject(ArgosDSL)

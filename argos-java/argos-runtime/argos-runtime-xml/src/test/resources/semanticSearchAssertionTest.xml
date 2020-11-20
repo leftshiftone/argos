@@ -1,0 +1,6 @@
+<assertions identityId="16082f40-3043-495a-8833-90fba9d04319">
+    <semanticSearchAssertion text="" topN="2">
+        <entry id="document1" score="0.9" />
+        <entry id="document2" score="0.8" />
+    </semanticSearchAssertion>
+</assertions>

@@ -64,9 +64,9 @@ class ArgosDSL private constructor(private val name: String, private val options
         assertions.add(ConversationAssertion(ConversationAssertionSpec(conv.participants, conv.attributes)))
     }
 
-    fun assertNer(text: String, action: NER.() -> Unit) {
+    fun assertNer(text: String, entities: NER.() -> Unit) {
         val entity = NER()
-        action(entity)
+        entities(entity)
         assertions.add(NERAssertion(NERAssertionSpec(text, entity)))
     }
 
@@ -104,9 +104,9 @@ class ArgosDSL private constructor(private val name: String, private val options
         assertions.add(ImageSimilarityAssertion(ImageSimilarityAssertionSpec(image1, image2, threshold)))
     }
 
-    fun assertOCR(image: String, action: OCR.() -> Unit) {
+    fun assertOCR(image: String, texts: OCR.() -> Unit) {
         val text = OCR()
-        action(text)
+        texts(text)
         assertions.add(OCRAssertion(OCRAssertionSpec(image, text)))
     }
 
@@ -138,6 +138,18 @@ class ArgosDSL private constructor(private val name: String, private val options
 
     fun assertSpeech2Text(speech: String, text: String) {
         assertions.add(Speech2TextAssertion(Speech2TextAssertionSpec(speech, text)))
+    }
+
+    fun assertSemanticSearch(text: String, topN: Int, entries: SemanticSearch.() -> Unit) {
+        val entry = SemanticSearch()
+        entries(entry)
+        assertions.add(SemanticSearchAssertion(SemanticSearchAssertionSpec(text, topN, entry)))
+    }
+
+    class SemanticSearch: ArrayList<SemanticSearchAssertionSpec.Entry>() {
+        fun entry(id: String, score: Float) {
+            add(SemanticSearchAssertionSpec.Entry(id, score))
+        }
     }
 
     // TODO: javadoc

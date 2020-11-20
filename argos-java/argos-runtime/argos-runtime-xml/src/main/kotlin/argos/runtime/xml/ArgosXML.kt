@@ -34,6 +34,7 @@ class ArgosXML private constructor() {
             val imageAssertions = doc.getElementsByTagName("imageAssertion")
             val text2speechAssertions = doc.getElementsByTagName("text2speechAssertion")
             val speech2textAssertions = doc.getElementsByTagName("speech2textAssertion")
+            val semanticSearchAssertions = doc.getElementsByTagName("semanticSearchAssertion")
 
             xml.assertions.addAll(TranslationAssertionParser().parse(translationAssertions))
             xml.assertions.addAll(NERAssertionsParser().parse(nerAssertions))
@@ -49,6 +50,7 @@ class ArgosXML private constructor() {
             xml.assertions.addAll(ImageAssertionParser().parse(imageAssertions))
             xml.assertions.addAll(Text2SpeechAssertionParser().parse(text2speechAssertions))
             xml.assertions.addAll(Speech2TextAssertionParser().parse(speech2textAssertions))
+            xml.assertions.addAll(SemanticSearchAssertionParser().parse(semanticSearchAssertions))
 
             return ParsedAssertions(identityId, xml.assertions)
         }

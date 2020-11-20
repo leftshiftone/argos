@@ -4,7 +4,6 @@ import argos.api.IAssertion
 import argos.core.assertion.*
 import argos.core.support.FileSupport
 import argos.core.support.ImageSupport
-import com.sun.org.apache.xpath.internal.Arg
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
 import gaia.sdk.core.GaiaRef
@@ -137,6 +136,16 @@ class ArgosTest {
                 "assertSpeech2Text(\"url-to-speech\", \"Text\")"), Speech2TextAssertion::class)
     }
 
+    @Test
+    fun testSemanticSearch() {
+        testMain(arrayOf(*testArgs,
+                "assertSemanticSearch(\"text\", 2) {\n" +
+                        "                entry(\"document1\", 0.9f)\n" +
+                        "                entry(\"document2\", 0.8f)\n" +
+                        "            }"), SemanticSearchAssertion::class)
+    }
+
+
     private fun testMain(args: Array<String>, assertionType: KClass<out IAssertion>) {
         fun setResponse(map: Map<String, Any>) {
             every { gaiaRef.skill("test_url").evaluate(any()) } returns Flowable.just(SkillEvaluation(map))
@@ -155,6 +164,7 @@ class ArgosTest {
             ImageAssertion::class -> setResponse(mapOf("image" to ImageSupport.getByteArrayFromImage("https://via.placeholder.com/150.jpg")))
             Text2SpeechAssertion::class -> setResponse(mapOf("speech" to ByteArray(4)))
             Speech2TextAssertion::class -> setResponse(mapOf("text" to "Text"))
+            SemanticSearchAssertion::class -> setResponse(mapOf("message" to mapOf("results" to arrayOf(mapOf("id" to "document1", "score" to 0.9f), mapOf("id" to "document2", "score" to 0.8f)))))
         }
         println("Args: ${args.asList()}")
         Argos.main(args)
