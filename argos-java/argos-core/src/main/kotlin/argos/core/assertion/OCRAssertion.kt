@@ -22,12 +22,9 @@ class OCRAssertion(val spec: OCRAssertionSpec): IAssertion {
 
                     for (text in spec.texts) {
                         if(text.text == responseText)
-                            if (text.fuzzy)
-                                return@map Success("success")
-                            else
-                                return@map Failure("Texts shouldn't match: ${text.text} ($responseText)")
+                            return@map Success("success")
                     }
-                    return@map Failure("No matching Text found: ${spec.texts} ($responseText)")
+                    Failure("failure")
                 }
     }
 }

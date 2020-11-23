@@ -23,7 +23,7 @@ class OCRAssertionTest: AbstractAssertionTest(OCRAssertion(OCRAssertionSpec("url
 
     @Test
     fun testFailure() {
-        Assertions.assertEquals(Failure::class, testForResponse(mapOf("text" to "Das ist ein Beispieltext.")))
+        Assertions.assertEquals(Failure::class, testForResponse(mapOf("text" to "Das ist kein weiterer Beispieltext.")))
     }
 
     @BeforeEach

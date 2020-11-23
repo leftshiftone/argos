@@ -6,14 +6,30 @@ import argos.runtime.xml.support.XmlParser
 import argos.runtime.xml.support.findAttr
 import java.io.InputStream
 
-// TODO: javadoc
+/**
+ * Class to parse Argos Assertions from XML instructions.
+ */
 class ArgosXML private constructor() {
+
+    /**
+     * A Data-Class which holds the parsed IAssertions.
+     *
+     * @param identityId the identity id
+     * @param assertionList a list of the parsed IAssertions
+     */
     data class ParsedAssertions(val identityId: String, val assertionList: List<IAssertion>)
 
     private val assertions: MutableList<IAssertion> = emptyList<IAssertion>().toMutableList()
     private val scheme = this::class.java.getResourceAsStream("/argos.xsd")!!
 
     companion object {
+        /**
+         * Parse argos assertions from XML.
+         *
+         * @param input the InputStream of the XML instructions
+         *
+         * @return a ParsedAssertions instance of the Assertions from the XML
+         */
         fun parse(input: InputStream): ParsedAssertions {
             val xml = ArgosXML()
             val doc = XmlParser(xml.scheme).invoke(input)
