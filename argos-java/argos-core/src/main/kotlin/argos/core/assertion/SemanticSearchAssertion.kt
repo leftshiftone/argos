@@ -1,6 +1,7 @@
 package argos.core.assertion
 
 import argos.api.*
+import argos.core.listener.LoggingAssertionListener
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
 import io.reactivex.Flowable
@@ -8,12 +9,13 @@ import org.reactivestreams.Publisher
 
 class SemanticSearchAssertion(val spec: SemanticSearchAssertionSpec): IAssertion {
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
-        val gaiaRef = Gaia.connect(options.config)
+        return try {
+            val gaiaRef = Gaia.connect(options.config)
 
-        val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
+            val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
                 .evaluate(mapOf("message" to mapOf("terms" to arrayOf(spec.text))))
 
-        return Flowable.fromPublisher(request)
+            Flowable.fromPublisher(request)
                 .map { it.asMap() }
                 .map { e ->
                     val message = e["message"] ?: return@map Failure("Empty response")
@@ -31,17 +33,21 @@ class SemanticSearchAssertion(val spec: SemanticSearchAssertionSpec): IAssertion
 
                                     spec.entries.forEach {
                                         if (id == it.id && score >= it.score)
-                                            return@map Success("success")
+                                            return@map Success(e.toString())
                                     }
                                 }
-                                else return@map Failure("Format Error: (result: ${result!!::class})")
+                                else return@map Failure("Format Error: (result=${result!!::class.simpleName})")
                             }
                         }
-                        else return@map Failure("Format Error: (results: ${results::class})")
+                        else return@map Failure("Format Error: (results=${results::class.simpleName})")
                     }
-                    else return@map Failure("Format error: (message: ${message::class})")
+                    else return@map Failure("Format error: (message=${message::class.simpleName})")
 
-                    Failure("failure")
+                    Failure("{message={results=${((e["message"] as Map<*,*>)["results"] as Array<*>).map { it }}}}")
                 }
+        }
+        catch (ex: Throwable) {
+            Flowable.just(Error(ex))
+        }
     }
 }

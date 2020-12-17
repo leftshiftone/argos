@@ -4,6 +4,7 @@
   <xs:element name="assertions" type="assertionsType"/>
   <xs:complexType name="assertionsType">
     <xs:sequence>
+      <xs:element type="assertionGroupType" name="assertionGroup" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="intentAssertionType" name="intentAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="similarityAssertionType" name="similarityAssertion" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="nerAssertionType" name="nerAssertion" maxOccurs="unbounded" minOccurs="0"/>
@@ -21,6 +22,28 @@
       <xs:element type="semanticSearchAssertionType" name="semanticSearchAssertion" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="identityId"/>
+    <xs:attribute type="xs:string" name="name" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="assertionGroupType">
+    <xs:sequence>
+      <xs:element type="intentAssertionType" name="intentAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="similarityAssertionType" name="similarityAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="nerAssertionType" name="nerAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="translationAssertionType" name="translationAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="sentimentAssertionType" name="sentimentAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="imageSimilarityAssertionType" name="imageSimilarityAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="conversationAssertionType" name="conversationAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="ocrAssertionType" name="ocrAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="languageDetectionAssertionType" name="languageDetectionAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="classificationAssertionType" name="classificationAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="regressionAssertionType" name="regressionAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="imageAssertionType" name="imageAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="text2speechAssertionType" name="text2speechAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="speech2textAssertionType" name="speech2textAssertion" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="semanticSearchAssertionType" name="semanticSearchAssertion" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="name"/>
   </xs:complexType>
 
 <!--  Intent Assertion -->
@@ -180,7 +203,7 @@
     <xs:attribute type="xs:string" name="text"/>
     <xs:attribute type="xs:string" name="topN"/>
   </xs:complexType>
-  
+
 <!--  Conversation Assertion -->
   <xs:complexType name="conversationAssertionType">
     <xs:choice maxOccurs="unbounded" minOccurs="0">
@@ -193,7 +216,6 @@
       </xs:element>
       <xs:element minOccurs="0" type="receptionType" name="reception"/>
     </xs:choice>
-    <xs:attribute type="xs:string" name="identity"/>
   </xs:complexType>
 
   <xs:complexType name="receptionType" mixed="true">
@@ -205,6 +227,7 @@
   <xs:complexType name="userType" mixed="true">
     <xs:choice maxOccurs="unbounded" minOccurs="0">
       <xs:element type="textType" name="text"/>
+      <xs:element type="labelType" name="label"/>
       <xs:element type="submitType" name="submit"/>
       <xs:element type="buttonType" name="button"/>
       <xs:element type="userType" name="or"/>
@@ -218,6 +241,7 @@
     <xs:choice maxOccurs="unbounded" minOccurs="0">
       <xs:element type="headlineType" name="headline"/>
       <xs:element type="textType" name="text"/>
+      <xs:element type="labelType" name="label"/>
       <xs:element type="itemsType" name="items"/>
       <xs:element type="imageType" name="image"/>
       <xs:element type="linkType" name="link"/>
@@ -231,6 +255,9 @@
       <xs:element type="formType" name="form"/>
       <xs:element type="contextType" name="context"/>
       <xs:element type="notificationType" name="notification"/>
+      <xs:element type="selectionType" name="selection"/>
+      <xs:element type="suggestionType" name="suggestion"/>
+      <xs:element type="tableType" name="table"/>
     </xs:choice>
     <xs:attribute type="xs:string" name="foreach"/>
     <xs:attribute type="xs:string" name="if"/>
@@ -256,40 +283,12 @@
     <xs:attribute type="xs:string" name="class"/>
   </xs:complexType>
 
-  <xs:complexType name="multipleChoiceType">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="choice" type="choiceType" minOccurs="1" maxOccurs="unbounded"/>
-      <xs:element name="table" type="tableType" minOccurs="0" maxOccurs="1"/>
-    </xs:choice>
-    <xs:attribute name="name" type="name" use="required"/>
-    <xs:attribute name="sieve" type="bool" default="true"/>
-    <xs:attribute name="class" type="xs:string"/>
-  </xs:complexType>
-
-  <xs:complexType name="singleChoiceType">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="choice" type="choiceType" minOccurs="1" maxOccurs="unbounded"/>
-    </xs:choice>
-    <xs:attribute name="name" type="name" use="required"/>
-    <xs:attribute name="sieve" type="bool" default="true"/>
-    <xs:attribute name="class" type="xs:string"/>
-  </xs:complexType>
-
-  <xs:complexType name="choiceType">
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute name="selected" type="bool" default="false"/>
-        <xs:attribute name="name" type="name" use="required"/>
-        <xs:attribute name="class" type="xs:string"/>
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
-
   <xs:complexType name="contextType" mixed="true">
     <xs:choice maxOccurs="unbounded" minOccurs="0">
       <xs:element type="assertJsonType" name="assertJson"/>
     </xs:choice>
   </xs:complexType>
+
   <xs:complexType name="notificationType" mixed="true">
     <xs:choice maxOccurs="unbounded" minOccurs="0">
       <xs:element type="assertJsonType" name="assertJson"/>
@@ -300,6 +299,7 @@
     <xs:choice maxOccurs="unbounded" minOccurs="0">
       <xs:element type="headlineType" name="headline"/>
       <xs:element type="textType" name="text"/>
+      <xs:element type="labelType" name="label"/>
       <xs:element type="itemsType" name="items"/>
       <xs:element type="imageType" name="image"/>
       <xs:element type="linkType" name="link"/>
@@ -348,7 +348,6 @@
       <xs:element type="slotMachineType" name="slotmachine"/>
       <xs:element type="itemsType" name="items"/>
       <xs:element type="mapType" name="map"/>
-      <xs:element type="checkboxType" name="checkbox"/>
       <xs:element type="imageType" name="image"/>
       <xs:element type="linkType" name="link"/>
       <xs:element type="xs:string" name="bold"/>
@@ -360,6 +359,7 @@
       <xs:element type="spinnerType" name="spinner"/>
       <xs:element type="formType" name="form"/>
       <xs:element type="textInputType" name="textInput"/>
+      <xs:element type="labelType" name="label"/>
       <xs:element type="choiceType" name="choice"/>
     </xs:choice>
     <xs:attribute type="xs:string" name="id"/>
@@ -368,43 +368,79 @@
     <xs:attribute type="xs:string" name="if"/>
   </xs:complexType>
 
-  <xs:complexType name="buttonType">
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute type="xs:string" name="value"/>
-        <xs:attribute type="xs:string" name="name"/>
-        <xs:attribute type="xs:string" name="position"/>
-        <xs:attribute type="xs:string" name="id"/>
-        <xs:attribute type="xs:string" name="class"/>
-      </xs:extension>
-    </xs:simpleContent>
+  <xs:complexType name="viewBlockType">
+    <xs:choice maxOccurs="unbounded" minOccurs="0">
+      <xs:element type="labelType" name="label"/>
+      <xs:element type="imageType" name="image"/>
+      <xs:element type="boldType" name="bold"/>
+      <xs:element type="italicType" name="italic"/>
+      <xs:element type="xs:string" name="break"/>
+      <xs:element type="viewBlockType" name="block"/>
+    </xs:choice>
+    <xs:attribute type="xs:string" name="id"/>
+    <xs:attribute type="xs:string" name="class"/>
   </xs:complexType>
 
-  <xs:complexType name="selectionBlockType">
-    <xs:choice maxOccurs="unbounded" minOccurs="0">
-      <xs:element type="headlineType" name="headline"/>
-      <xs:element type="textType" name="text"/>
+  <xs:complexType name="buttonType" mixed="true">
+    <xs:choice minOccurs="0">
+      <xs:element type="labelType" name="label"/>
       <xs:element type="itemsType" name="items"/>
       <xs:element type="imageType" name="image"/>
       <xs:element type="boldType" name="bold"/>
+      <xs:element type="italicType" name="italic"/>
       <xs:element type="xs:string" name="break"/>
-      <xs:element type="selectionBlockType" name="block"/>
+      <xs:element type="viewBlockType" name="block"/>
     </xs:choice>
-    <xs:attribute type="xs:string" name="name"/>
+    <xs:attribute type="xs:string" name="value"/>
+    <xs:attribute name="name" type="name"/>
+    <xs:attribute type="xs:string" name="position"/>
     <xs:attribute type="xs:string" name="id"/>
     <xs:attribute type="xs:string" name="class"/>
-    <xs:attribute type="xs:string" name="foreach"/>
-    <xs:attribute type="xs:string" name="if"/>
   </xs:complexType>
 
   <xs:complexType name="selectionType">
     <xs:choice maxOccurs="unbounded" minOccurs="0">
-      <xs:element type="selectionBlockType" name="block"/>
+      <xs:element type="selectionItemType" name="selectionItem"/>
     </xs:choice>
     <xs:attribute type="xs:string" name="name"/>
     <xs:attribute type="xs:string" name="countdownInSec"/>
     <xs:attribute type="xs:string" name="id"/>
     <xs:attribute type="xs:string" name="class"/>
+  </xs:complexType>
+
+  <xs:complexType name="selectionItemType">
+    <xs:choice maxOccurs="unbounded" minOccurs="0">
+      <xs:element type="videoType" name="video"/>
+      <xs:element type="headlineType" name="headline"/>
+      <xs:element type="labelType" name="label"/>
+      <xs:element type="itemsType" name="items"/>
+      <xs:element type="imageType" name="image"/>
+      <xs:element type="linkType" name="link"/>
+      <xs:element type="boldType" name="bold"/>
+      <xs:element type="italicType" name="italic"/>
+      <xs:element type="selectableType" name="selectable"/>
+      <xs:element type="blockType" name="block"/>
+    </xs:choice>
+    <xs:attribute type="name" name="name" use="required"/>
+    <xs:attribute type="xs:string" name="class"/>
+    <xs:attribute type="xs:string" name="foreach"/>
+    <xs:attribute type="xs:string" name="if"/>
+  </xs:complexType>
+
+  <xs:complexType name="selectableType">
+    <xs:choice maxOccurs="unbounded" minOccurs="0">
+      <xs:element type="videoType" name="video"/>
+      <xs:element type="headlineType" name="headline"/>
+      <xs:element type="labelType" name="label"/>
+      <xs:element type="imageType" name="image"/>
+      <xs:element type="linkType" name="link"/>
+      <xs:element type="boldType" name="bold"/>
+      <xs:element type="italicType" name="italic"/>
+    </xs:choice>
+    <xs:attribute name="name" type="name" use="required"/>
+    <xs:attribute type="xs:string" name="id"/>
+    <xs:attribute type="xs:string" name="class"/>
+    <xs:attribute type="xs:string" name="if"/>
   </xs:complexType>
 
   <xs:complexType name="sliderType">
@@ -449,17 +485,41 @@
     </xs:simpleContent>
   </xs:complexType>
 
-  <xs:complexType name="checkboxType">
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute type="xs:string" name="name"/>
-        <xs:attribute type="xs:string" name="value"/>
-        <xs:attribute type="xs:string" name="group"/>
-        <xs:attribute type="xs:boolean" name="checked"/>
-        <xs:attribute type="xs:string" name="id"/>
-        <xs:attribute type="xs:string" name="class"/>
-      </xs:extension>
-    </xs:simpleContent>
+  <xs:complexType name="singleChoiceType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="choice" type="choiceType" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:choice>
+    <xs:attribute name="name" type="name" use="required"/>
+    <xs:attribute name="sieve" type="bool" default="true"/>
+    <xs:attribute name="required" type="bool" default="false"/>
+    <xs:attribute name="class" type="xs:string"/>
+    <xs:attribute type="xs:string" name="id"/>
+  </xs:complexType>
+
+  <xs:complexType name="multipleChoiceType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="choice" type="choiceType" minOccurs="1" maxOccurs="unbounded"/>
+      <xs:element name="table" type="tableType" minOccurs="0" maxOccurs="1"/>
+    </xs:choice>
+    <xs:attribute name="name" type="name" use="required"/>
+    <xs:attribute name="sieve" type="bool" default="true"/>
+    <xs:attribute name="required" type="bool" default="false"/>
+    <xs:attribute name="class" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="choiceType" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element type="labelType" name="label"/>
+      <xs:element type="imageType" name="image"/>
+      <xs:element type="boldType" name="bold"/>
+      <xs:element type="italicType" name="italic"/>
+      <xs:element type="xs:string" name="break"/>
+      <xs:element type="viewBlockType" name="block"/>
+    </xs:choice>
+    <xs:attribute name="selected" type="xs:string" default="false"/>
+    <xs:attribute name="name" type="name" use="required"/>
+    <xs:attribute name="class" type="xs:string"/>
+    <xs:attribute type="xs:string" name="foreach"/>
   </xs:complexType>
 
   <xs:complexType name="blockType">
@@ -467,10 +527,10 @@
       <xs:element type="triggerType" name="trigger"/>
       <xs:element type="headlineType" name="headline"/>
       <xs:element type="textType" name="text"/>
+      <xs:element type="labelType" name="label"/>
       <xs:element type="itemsType" name="items"/>
       <xs:element type="textInputType" name="textInput"/>
       <xs:element type="textareaType" name="textarea"/>
-      <xs:element type="checkboxType" name="checkbox"/>
       <xs:element type="slotMachineType" name="slotmachine"/>
       <xs:element type="imageType" name="image"/>
       <xs:element type="linkType" name="link"/>
@@ -491,10 +551,10 @@
       <xs:element type="singleChoiceType" name="singleChoice"/>
       <xs:element type="blockType" name="block"/>
       <xs:element type="suggestionType" name="suggestion"/>
+      <xs:element type="selectableType" name="selectable"/>
     </xs:choice>
     <xs:attribute type="xs:string" name="id"/>
     <xs:attribute type="xs:string" name="class"/>
-    <xs:attribute type="xs:string" name="name"/>
     <xs:attribute type="xs:string" name="foreach"/>
     <xs:attribute type="xs:string" name="if"/>
     <xs:attribute type="xs:integer" name="expect"/>
@@ -531,13 +591,24 @@
     <xs:attribute type="xs:string" name="class"/>
   </xs:complexType>
 
-  <xs:complexType name="textType">
+  <xs:complexType name="labelType">
     <xs:simpleContent>
       <xs:extension base="xs:string">
         <xs:attribute type="xs:string" name="id"/>
         <xs:attribute type="xs:string" name="class"/>
+        <xs:attribute type="xs:string" name="if"/>
       </xs:extension>
     </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="textType">
+    <xs:attribute name="name" type="name" use="required"/>
+    <xs:attribute type="xs:string" name="regex"/>
+    <xs:attribute type="xs:string" name="placeholder"/>
+    <xs:attribute type="xs:string" name="value"/>
+    <xs:attribute type="xs:boolean" name="required"/>
+    <xs:attribute type="xs:string" name="id"/>
+    <xs:attribute type="xs:string" name="class"/>
   </xs:complexType>
 
   <xs:complexType name="boldType">
@@ -584,7 +655,7 @@
       <xs:element type="headlineType" name="headline"/>
       <xs:element type="calendarType" name="calendar"/>
       <xs:element type="textType" name="text"/>
-      <xs:element type="checkboxType" name="checkbox"/>
+      <xs:element type="labelType" name="label"/>
       <xs:element type="imageType" name="image"/>
       <xs:element type="linkType" name="link"/>
       <xs:element type="boldType" name="bold"/>
@@ -730,7 +801,6 @@
       <xs:element type="cameraType" name="camera"/>
       <xs:element type="carouselType" name="carousel"/>
       <xs:element type="codeReaderType" name="codeReader"/>
-      <xs:element type="checkboxType" name="checkbox"/>
       <xs:element type="emailType" name="email"/>
       <xs:element type="headlineType" name="headline"/>
       <xs:element type="imageType" name="image"/>
@@ -738,6 +808,7 @@
       <xs:element type="phoneType" name="phone"/>
       <xs:element type="submitType" name="submit" minOccurs="1" maxOccurs="1"/>
       <xs:element type="textType" name="text"/>
+      <xs:element type="labelType" name="label"/>
       <xs:element type="textInputType" name="textInput"/>
       <xs:element type="textareaType" name="textarea"/>
       <xs:element type="slotMachineType" name="slotmachine"/>
@@ -772,6 +843,7 @@
     <xs:attribute type="xs:string" name="required"/>
     <xs:attribute type="xs:string" name="id"/>
     <xs:attribute type="xs:string" name="class"/>
+    <xs:attribute type="xs:string" name="value"/>
   </xs:complexType>
 
   <xs:complexType name="emailType">
@@ -780,6 +852,7 @@
     <xs:attribute type="xs:string" name="required"/>
     <xs:attribute type="xs:string" name="id"/>
     <xs:attribute type="xs:string" name="class"/>
+    <xs:attribute type="xs:string" name="value"/>
   </xs:complexType>
 
   <xs:complexType name="jsonType">
@@ -820,10 +893,10 @@
       <xs:element type="blockType" name="block"/>
       <xs:element type="headlineType" name="headline"/>
       <xs:element type="textType" name="text"/>
+      <xs:element type="labelType" name="label"/>
       <xs:element type="itemsType" name="items"/>
       <xs:element type="textInputType" name="textInput"/>
       <xs:element type="textareaType" name="textarea"/>
-      <xs:element type="checkboxType" name="checkbox"/>
       <xs:element type="slotMachineType" name="slotmachine"/>
       <xs:element type="reelType" name="reel"/>
       <xs:element type="imageType" name="image"/>
@@ -851,5 +924,676 @@
     <xs:attribute name="direction" default="down"/>
     <xs:attribute name="wrapped" default="in"/>
   </xs:complexType>
+
+<!--  Conversation Assertion old-->
+<!--  <xs:complexType name="conversationAssertionType">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="gaiaType" name="gaia"/>-->
+<!--      <xs:element type="userType" name="user"/>-->
+<!--      <xs:element name="include">-->
+<!--        <xs:complexType>-->
+<!--          <xs:attribute type="xs:string" name="href"/>-->
+<!--        </xs:complexType>-->
+<!--      </xs:element>-->
+<!--      <xs:element minOccurs="0" type="receptionType" name="reception"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="identity"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="receptionType" mixed="true">-->
+<!--    <xs:choice>-->
+<!--      <xs:element type="jsonType" name="json"/>-->
+<!--    </xs:choice>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="userType" mixed="true">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="textType" name="text"/>-->
+<!--      <xs:element type="submitType" name="submit"/>-->
+<!--      <xs:element type="buttonType" name="button"/>-->
+<!--      <xs:element type="userType" name="or"/>-->
+<!--      <xs:element type="andType" name="and"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="foreach"/>-->
+<!--    <xs:attribute type="xs:string" name="if"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="gaiaType" mixed="true">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="headlineType" name="headline"/>-->
+<!--      <xs:element type="textType" name="text"/>-->
+<!--      <xs:element type="itemsType" name="items"/>-->
+<!--      <xs:element type="imageType" name="image"/>-->
+<!--      <xs:element type="linkType" name="link"/>-->
+<!--      <xs:element type="boldType" name="bold"/>-->
+<!--      <xs:element type="xs:string" name="break"/>-->
+<!--      <xs:element type="blockType" name="block"/>-->
+<!--      <xs:element type="buttonType" name="button"/>-->
+<!--      <xs:element type="gaiaType" name="or"/>-->
+<!--      <xs:element type="carouselType" name="carousel"/>-->
+<!--      <xs:element type="andType" name="and"/>-->
+<!--      <xs:element type="formType" name="form"/>-->
+<!--      <xs:element type="contextType" name="context"/>-->
+<!--      <xs:element type="notificationType" name="notification"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="foreach"/>-->
+<!--    <xs:attribute type="xs:string" name="if"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="codeReaderType" mixed="true">-->
+<!--    <xs:attribute name="name" type="xs:string"/>-->
+<!--    <xs:attribute name="format" use="required">-->
+<!--      <xs:simpleType>-->
+<!--        <xs:restriction base="xs:string">-->
+<!--          <xs:enumeration value="qr"/>-->
+<!--          <xs:enumeration value="bar"/>-->
+<!--        </xs:restriction>-->
+<!--      </xs:simpleType>-->
+<!--    </xs:attribute>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="cameraType" mixed="true">-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="multipleChoiceType">-->
+<!--    <xs:choice minOccurs="0" maxOccurs="unbounded">-->
+<!--      <xs:element name="choice" type="choiceType" minOccurs="1" maxOccurs="unbounded"/>-->
+<!--      <xs:element name="table" type="tableType" minOccurs="0" maxOccurs="1"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute name="name" type="name" use="required"/>-->
+<!--    <xs:attribute name="sieve" type="bool" default="true"/>-->
+<!--    <xs:attribute name="class" type="xs:string"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="singleChoiceType">-->
+<!--    <xs:choice minOccurs="0" maxOccurs="unbounded">-->
+<!--      <xs:element name="choice" type="choiceType" minOccurs="1" maxOccurs="unbounded"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute name="name" type="name" use="required"/>-->
+<!--    <xs:attribute name="sieve" type="bool" default="true"/>-->
+<!--    <xs:attribute name="class" type="xs:string"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="choiceType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute name="selected" type="bool" default="false"/>-->
+<!--        <xs:attribute name="name" type="name" use="required"/>-->
+<!--        <xs:attribute name="class" type="xs:string"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="contextType" mixed="true">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="assertJsonType" name="assertJson"/>-->
+<!--    </xs:choice>-->
+<!--  </xs:complexType>-->
+<!--  <xs:complexType name="notificationType" mixed="true">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="assertJsonType" name="assertJson"/>-->
+<!--    </xs:choice>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="andType">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="headlineType" name="headline"/>-->
+<!--      <xs:element type="textType" name="text"/>-->
+<!--      <xs:element type="itemsType" name="items"/>-->
+<!--      <xs:element type="imageType" name="image"/>-->
+<!--      <xs:element type="linkType" name="link"/>-->
+<!--      <xs:element type="boldType" name="bold"/>-->
+<!--      <xs:element type="xs:string" name="break"/>-->
+<!--      <xs:element type="blockType" name="block"/>-->
+<!--      <xs:element type="buttonType" name="button"/>-->
+<!--      <xs:element type="carouselType" name="carousel"/>-->
+<!--      <xs:element type="formType" name="form"/>-->
+<!--      <xs:element type="overlaysType" name="overlays"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="regex"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="itemsType" mixed="true">-->
+<!--    <xs:sequence>-->
+<!--      <xs:element name="item" type="itemType" maxOccurs="unbounded" minOccurs="0"/>-->
+<!--    </xs:sequence>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="tableType" mixed="true">-->
+<!--    <xs:sequence maxOccurs="unbounded">-->
+<!--      <xs:element type="rowType" name="row"/>-->
+<!--    </xs:sequence>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="rowType" mixed="true">-->
+<!--    <xs:sequence maxOccurs="unbounded">-->
+<!--      <xs:element type="colType" name="col"/>-->
+<!--    </xs:sequence>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="colType" mixed="true">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="codeReaderType" name="codeReader"/>-->
+<!--      <xs:element type="cameraType" name="camera"/>-->
+<!--      <xs:element type="xs:string" name="headline"/>-->
+<!--      <xs:element type="xs:string" name="text"/>-->
+<!--      <xs:element type="reelType" name="reel"/>-->
+<!--      <xs:element type="slotMachineType" name="slotmachine"/>-->
+<!--      <xs:element type="itemsType" name="items"/>-->
+<!--      <xs:element type="mapType" name="map"/>-->
+<!--      <xs:element type="checkboxType" name="checkbox"/>-->
+<!--      <xs:element type="imageType" name="image"/>-->
+<!--      <xs:element type="linkType" name="link"/>-->
+<!--      <xs:element type="xs:string" name="bold"/>-->
+<!--      <xs:element type="xs:string" name="b"/>-->
+<!--      <xs:element type="calendarType" name="calendar"/>-->
+<!--      <xs:element type="blockType" name="block"/>-->
+<!--      <xs:element type="buttonType" name="button"/>-->
+<!--      <xs:element type="sliderType" name="slider"/>-->
+<!--      <xs:element type="spinnerType" name="spinner"/>-->
+<!--      <xs:element type="formType" name="form"/>-->
+<!--      <xs:element type="textInputType" name="textInput"/>-->
+<!--      <xs:element type="choiceType" name="choice"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--    <xs:attribute type="xs:string" name="foreach"/>-->
+<!--    <xs:attribute type="xs:string" name="if"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="buttonType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="value"/>-->
+<!--        <xs:attribute type="xs:string" name="name"/>-->
+<!--        <xs:attribute type="xs:string" name="position"/>-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="selectionBlockType">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="headlineType" name="headline"/>-->
+<!--      <xs:element type="textType" name="text"/>-->
+<!--      <xs:element type="itemsType" name="items"/>-->
+<!--      <xs:element type="imageType" name="image"/>-->
+<!--      <xs:element type="boldType" name="bold"/>-->
+<!--      <xs:element type="xs:string" name="break"/>-->
+<!--      <xs:element type="selectionBlockType" name="block"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--    <xs:attribute type="xs:string" name="foreach"/>-->
+<!--    <xs:attribute type="xs:string" name="if"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="selectionType">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="selectionBlockType" name="block"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="countdownInSec"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="sliderType">-->
+<!--    <xs:attribute type="xs:decimal" name="min"/>-->
+<!--    <xs:attribute type="xs:decimal" name="max"/>-->
+<!--    <xs:attribute type="xs:decimal" name="step"/>-->
+<!--    <xs:attribute type="xs:boolean" name="horizontal"/>-->
+<!--    <xs:attribute type="xs:decimal" name="value"/>-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="values"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="spinnerType">-->
+<!--    <xs:attribute type="xs:decimal" name="min"/>-->
+<!--    <xs:attribute type="xs:decimal" name="max"/>-->
+<!--    <xs:attribute type="xs:decimal" name="step"/>-->
+<!--    <xs:attribute type="xs:decimal" name="value"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="submitType" mixed="true">-->
+<!--    <xs:choice minOccurs="0">-->
+<!--      <xs:element type="xs:string" name="json"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="suggestionType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="value"/>-->
+<!--        <xs:attribute type="xs:string" name="name"/>-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="checkboxType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="name"/>-->
+<!--        <xs:attribute type="xs:string" name="value"/>-->
+<!--        <xs:attribute type="xs:string" name="group"/>-->
+<!--        <xs:attribute type="xs:boolean" name="checked"/>-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="blockType">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="triggerType" name="trigger"/>-->
+<!--      <xs:element type="headlineType" name="headline"/>-->
+<!--      <xs:element type="textType" name="text"/>-->
+<!--      <xs:element type="itemsType" name="items"/>-->
+<!--      <xs:element type="textInputType" name="textInput"/>-->
+<!--      <xs:element type="textareaType" name="textarea"/>-->
+<!--      <xs:element type="checkboxType" name="checkbox"/>-->
+<!--      <xs:element type="slotMachineType" name="slotmachine"/>-->
+<!--      <xs:element type="imageType" name="image"/>-->
+<!--      <xs:element type="linkType" name="link"/>-->
+<!--      <xs:element type="boldType" name="bold"/>-->
+<!--      <xs:element type="tableType" name="table"/>-->
+<!--      <xs:element type="mapType" name="map"/>-->
+<!--      <xs:element type="submitType" name="submit"/>-->
+<!--      <xs:element type="xs:string" name="break"/>-->
+<!--      <xs:element type="calendarType" name="calendar"/>-->
+<!--      <xs:element type="buttonType" name="button"/>-->
+<!--      <xs:element type="sliderType" name="slider"/>-->
+<!--      <xs:element type="spinnerType" name="spinner"/>-->
+<!--      <xs:element type="uploadType" name="upload"/>-->
+<!--      <xs:element type="selectionType" name="selection"/>-->
+<!--      <xs:element type="cameraType" name="camera"/>-->
+<!--      <xs:element type="codeReaderType" name="codeReader"/>-->
+<!--      <xs:element type="multipleChoiceType" name="multipleChoice"/>-->
+<!--      <xs:element type="singleChoiceType" name="singleChoice"/>-->
+<!--      <xs:element type="blockType" name="block"/>-->
+<!--      <xs:element type="suggestionType" name="suggestion"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="foreach"/>-->
+<!--    <xs:attribute type="xs:string" name="if"/>-->
+<!--    <xs:attribute type="xs:integer" name="expect"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="linkType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="value"/>-->
+<!--        <xs:attribute type="xs:string" name="name"/>-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--        <xs:attribute type="xs:string" name="if"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="uploadType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="maxSize"/>-->
+<!--        <xs:attribute type="xs:string" name="name"/>-->
+<!--        <xs:attribute type="xs:string" name="accept"/>-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--        <xs:attribute type="xs:string" name="maxCompressSize"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="calendarType">-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="textType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="boldType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="headlineType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="italicType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="videoType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="src" use="required"/>-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="itemType">-->
+<!--    <xs:choice minOccurs="0">-->
+<!--      <xs:element type="itemsType" name="items"/>-->
+<!--      <xs:element type="videoType" name="video"/>-->
+<!--      <xs:element type="headlineType" name="headline"/>-->
+<!--      <xs:element type="calendarType" name="calendar"/>-->
+<!--      <xs:element type="textType" name="text"/>-->
+<!--      <xs:element type="checkboxType" name="checkbox"/>-->
+<!--      <xs:element type="imageType" name="image"/>-->
+<!--      <xs:element type="linkType" name="link"/>-->
+<!--      <xs:element type="boldType" name="bold"/>-->
+<!--      <xs:element type="italicType" name="italic"/>-->
+<!--      <xs:element type="blockType" name="block"/>-->
+<!--      <xs:element type="slotMachineType" name="slotmachine"/>-->
+<!--      <xs:element type="buttonType" name="button"/>-->
+<!--      <xs:element type="sliderType" name="slider"/>-->
+<!--      <xs:element type="mapType" name="map"/>-->
+<!--      <xs:element type="formType" name="form"/>-->
+<!--      <xs:element type="textInputType" name="textInput"/>-->
+<!--      <xs:element type="textareaType" name="textarea"/>-->
+<!--      <xs:element type="choiceType" name="choice"/>-->
+<!--      <xs:element type="emailType" name="email"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="foreach"/>-->
+<!--    <xs:attribute type="xs:string" name="if"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="liType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="foreach"/>-->
+<!--        <xs:attribute type="xs:string" name="if"/>-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="imageType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="src"/>-->
+<!--        <xs:attribute type="xs:string" name="width"/>-->
+<!--        <xs:attribute type="xs:string" name="height"/>-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--        <xs:attribute type="xs:string" name="alt"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="mapType">-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="src"/>-->
+<!--    <xs:attribute type="xs:string" name="markerIcon"/>-->
+<!--    <xs:attribute type="xs:string" name="selectedMarkerIcon"/>-->
+<!--    <xs:attribute type="xs:string" name="routeStartIcon"/>-->
+<!--    <xs:attribute type="xs:string" name="routeEndIcon"/>-->
+<!--    <xs:attribute type="xs:string" name="routePoints"/>-->
+<!--    <xs:attribute type="xs:string" name="mapType"/>-->
+<!--    <xs:attribute type="xs:string" name="centerLat"/>-->
+<!--    <xs:attribute type="xs:string" name="centerLng"/>-->
+<!--    <xs:attribute type="xs:string" name="centerBrowserLocation"/>-->
+<!--    <xs:attribute type="xs:string" name="required"/>-->
+<!--    <xs:attribute type="xs:integer" name="maxSelections" default="1"/>-->
+<!--    <xs:attribute type="xs:integer" name="zoom" default="8" />-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="reelValueType">-->
+<!--    <xs:attribute type="xs:string" name="value"/>-->
+<!--    <xs:attribute type="xs:string" name="valueType"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="reelType">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="reelValueType" name="reelValue"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="slotMachineType">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="reelType" name="reel"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="overlaysType">-->
+<!--    <xs:sequence maxOccurs="unbounded" minOccurs="1">-->
+<!--      <xs:element type="overlayType" name="overlay"/>-->
+<!--    </xs:sequence>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--    <xs:attribute type="xs:string" name="if"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="overlayType">-->
+<!--    <xs:choice>-->
+<!--      <xs:element type="blockType" name="block"/>-->
+<!--      <xs:element type="formType" name="form"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute name="trigger" type="name" use="required"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="triggerType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute name="name" type="name" use="required"/>-->
+<!--        <xs:attribute type="xs:string" name="id"/>-->
+<!--        <xs:attribute type="xs:string" name="class"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="carouselType">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="1">-->
+<!--      <xs:element type="blockType" name="block"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="textareaType">-->
+<!--    <xs:attribute type="xs:positiveInteger" name="cols"/>-->
+<!--    <xs:attribute type="xs:positiveInteger" name="rows"/>-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="placeholder"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="formType">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="1">-->
+<!--      <xs:element type="triggerType" name="trigger"/>-->
+<!--      <xs:element type="blockType" name="block"/>-->
+<!--      <xs:element type="boldType" name="bold"/>-->
+<!--      <xs:element type="xs:string" name="break"/>-->
+<!--      <xs:element type="buttonType" name="button"/>-->
+<!--      <xs:element type="calendarType" name="calendar"/>-->
+<!--      <xs:element type="cameraType" name="camera"/>-->
+<!--      <xs:element type="carouselType" name="carousel"/>-->
+<!--      <xs:element type="codeReaderType" name="codeReader"/>-->
+<!--      <xs:element type="checkboxType" name="checkbox"/>-->
+<!--      <xs:element type="emailType" name="email"/>-->
+<!--      <xs:element type="headlineType" name="headline"/>-->
+<!--      <xs:element type="imageType" name="image"/>-->
+<!--      <xs:element type="itemsType" name="items"/>-->
+<!--      <xs:element type="phoneType" name="phone"/>-->
+<!--      <xs:element type="submitType" name="submit" minOccurs="1" maxOccurs="1"/>-->
+<!--      <xs:element type="textType" name="text"/>-->
+<!--      <xs:element type="textInputType" name="textInput"/>-->
+<!--      <xs:element type="textareaType" name="textarea"/>-->
+<!--      <xs:element type="slotMachineType" name="slotmachine"/>-->
+<!--      <xs:element type="reelType" name="reel"/>-->
+<!--      <xs:element type="linkType" name="link"/>-->
+<!--      <xs:element type="tableType" name="table"/>-->
+<!--      <xs:element type="mapType" name="map"/>-->
+<!--      <xs:element type="sliderType" name="slider"/>-->
+<!--      <xs:element type="spinnerType" name="spinner"/>-->
+<!--      <xs:element type="uploadType" name="upload"/>-->
+<!--      <xs:element type="selectionType" name="selection"/>-->
+<!--      <xs:element type="multipleChoiceType" name="multipleChoice"/>-->
+<!--      <xs:element type="singleChoiceType" name="singleChoice"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute name="name" type="name"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="textInputType">-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="regex"/>-->
+<!--    <xs:attribute type="xs:string" name="placeholder"/>-->
+<!--    <xs:attribute type="xs:string" name="required"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="phoneType">-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="placeholder"/>-->
+<!--    <xs:attribute type="xs:string" name="required"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="emailType">-->
+<!--    <xs:attribute type="xs:string" name="name"/>-->
+<!--    <xs:attribute type="xs:string" name="placeholder"/>-->
+<!--    <xs:attribute type="xs:string" name="required"/>-->
+<!--    <xs:attribute type="xs:string" name="id"/>-->
+<!--    <xs:attribute type="xs:string" name="class"/>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="jsonType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string"/>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  <xs:complexType name="assertJsonType">-->
+<!--    <xs:simpleContent>-->
+<!--      <xs:extension base="xs:string">-->
+<!--        <xs:attribute type="xs:string" name="path"/>-->
+<!--      </xs:extension>-->
+<!--    </xs:simpleContent>-->
+<!--  </xs:complexType>-->
+
+<!--  &lt;!&ndash; custom attribute types &ndash;&gt;-->
+<!--  <xs:simpleType name="bool">-->
+<!--    &lt;!&ndash; xs:bool accepts {true|false} and {0|1}, this one only {true|false}&ndash;&gt;-->
+<!--    <xs:restriction base="xs:string">-->
+<!--      <xs:enumeration value="true"/>-->
+<!--      <xs:enumeration value="false"/>-->
+<!--    </xs:restriction>-->
+<!--  </xs:simpleType>-->
+
+<!--  <xs:simpleType name="name">-->
+<!--    <xs:restriction base="xs:string">-->
+<!--      <xs:minLength value="1"/>-->
+<!--      <xs:maxLength value="50"/>-->
+<!--      &lt;!&ndash; curly braces in pattern is for variable replacement like {{$foo}} &ndash;&gt;-->
+<!--      <xs:pattern value="[a-zA-Z_0-9{}$]*"/>-->
+<!--    </xs:restriction>-->
+<!--  </xs:simpleType>-->
+
+<!--  <xs:complexType name="transitionType" mixed="true">-->
+<!--    <xs:choice maxOccurs="unbounded" minOccurs="0">-->
+<!--      <xs:element type="formType" name="form"/>-->
+<!--      <xs:element type="blockType" name="block"/>-->
+<!--      <xs:element type="headlineType" name="headline"/>-->
+<!--      <xs:element type="textType" name="text"/>-->
+<!--      <xs:element type="itemsType" name="items"/>-->
+<!--      <xs:element type="textInputType" name="textInput"/>-->
+<!--      <xs:element type="textareaType" name="textarea"/>-->
+<!--      <xs:element type="checkboxType" name="checkbox"/>-->
+<!--      <xs:element type="slotMachineType" name="slotmachine"/>-->
+<!--      <xs:element type="reelType" name="reel"/>-->
+<!--      <xs:element type="imageType" name="image"/>-->
+<!--      <xs:element type="linkType" name="link"/>-->
+<!--      <xs:element type="boldType" name="bold"/>-->
+<!--      <xs:element type="tableType" name="table"/>-->
+<!--      <xs:element type="mapType" name="map"/>-->
+<!--      <xs:element type="submitType" name="submit"/>-->
+<!--      <xs:element type="xs:string" name="break"/>-->
+<!--      <xs:element type="calendarType" name="calendar"/>-->
+<!--      <xs:element type="buttonType" name="button"/>-->
+<!--      <xs:element type="sliderType" name="slider"/>-->
+<!--      <xs:element type="spinnerType" name="spinner"/>-->
+<!--      <xs:element type="uploadType" name="upload"/>-->
+<!--      <xs:element type="selectionType" name="selection"/>-->
+<!--      <xs:element type="cameraType" name="camera"/>-->
+<!--      <xs:element type="codeReaderType" name="codeReader"/>-->
+<!--      <xs:element type="multipleChoiceType" name="multipleChoice"/>-->
+<!--      <xs:element type="singleChoiceType" name="singleChoice"/>-->
+<!--      <xs:element type="emailType" name="email"/>-->
+<!--      <xs:element type="phoneType" name="phone"/>-->
+<!--      <xs:element type="carouselType" name="carousel"/>-->
+<!--      <xs:element type="suggestionType" name="suggestion"/>-->
+<!--    </xs:choice>-->
+<!--    <xs:attribute name="direction" default="down"/>-->
+<!--    <xs:attribute name="wrapped" default="in"/>-->
+<!--  </xs:complexType>-->
 
 </xs:schema>

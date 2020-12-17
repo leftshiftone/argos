@@ -2,6 +2,8 @@ package argos.runtime.dsl
 
 import argos.api.ArgosOptions
 import argos.api.Success
+import argos.core.listener.JUnitReportAssertionListener
+import argos.core.listener.LoggingAssertionListener
 import argos.core.support.FileSupport
 import argos.core.support.ImageSupport
 import gaia.sdk.HMACCredentials
@@ -19,6 +21,24 @@ import org.junit.jupiter.api.Test
 class ArgosDSLTest {
     private val options = ArgosOptions("", GaiaConfig("", HMACCredentials("", "")))
     private lateinit var gaiaRef: GaiaRef
+
+    @Test
+    fun testJUnitReport() {
+        setResponse(mapOf("class" to "customClass"))
+
+        options.addListener(LoggingAssertionListener())
+        options.addListener(JUnitReportAssertionListener())
+
+        val result = ArgosDSL.argos("ClassificationAssertionTest", options) {
+            assertionGroup("Classification Test#1") {
+                assertClassification("Text", "customClass")
+                assertClassification("Text", "anotherClass")
+            }
+            assertClassification("Text", "otherClass")
+            assertClassification("Text", "someOtherClass")
+        }
+        Flowable.fromPublisher(result).subscribe()
+    }
 
     @Test
     fun testIntent() {
@@ -51,7 +71,7 @@ class ArgosDSLTest {
         val result = ArgosDSL.argos("argos test", options) {
             assertNer("ich suche einen anwalt in der steiermark") {
                 entity("location", "steiermark", 6)
-                not(entity("organization"))
+                not(entity("organization", "steiermark"))
             }
         }
         val type = Flowable.fromPublisher(result).blockingFirst()
@@ -224,9 +244,9 @@ class ArgosDSLTest {
 
     @AfterEach
     fun verifyMock() {
-        verify { Gaia.connect(options.config) }
+        verify { Gaia.connect(any()) }
         verify { gaiaRef.skill("").evaluate(any()) }
-        verify { ArgosDSL.argos("argos test", options, any()) }
+        verify { ArgosDSL.argos(any(), any(), any()) }
 
         confirmVerified(ArgosDSL)
         confirmVerified(gaiaRef)

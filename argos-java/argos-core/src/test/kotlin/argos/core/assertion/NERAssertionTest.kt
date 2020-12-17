@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 class NERAssertionTest: AbstractAssertionTest(
         NERAssertion(NERAssertionSpec("ich suche einen anwalt in der steiermark", listOf(
                 NERAssertionSpec.Entity(label = "location", text = "steiermark", index = 6),
-                NERAssertionSpec.Entity(label = "organization", text = "", not = true))))) {
+                NERAssertionSpec.Entity(label = "organization", text = "steiermark", not = true))))) {
 
     private val validResponse: List<Map<String, Any>> = listOf(mapOf("text" to "steiermark", "label" to "location"))
     private val invalidResponse: List<Map<String, Any>> = listOf(mapOf("text" to "steiermark", "label" to "organization"))

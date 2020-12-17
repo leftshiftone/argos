@@ -1,25 +1,22 @@
 package argos.runtime.dsl
 
 import argos.api.ArgosOptions
-import argos.api.Error
+import argos.api.AssertionGroup
 import argos.api.IAssertion
 import argos.api.IAssertionResult
 import argos.core.assertion.*
 import argos.core.augmenter.QwertzAugmenter
 import argos.runtime.dsl.config.Conversation
-import gaia.sdk.core.Gaia
-import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Class to directly run Argos Assertion Tests.
  */
-class ArgosDSL private constructor(private val name: String, private val options: ArgosOptions) {
+class ArgosDSL {
+    private val assertions: CopyOnWriteArrayList<AssertionGroup> = CopyOnWriteArrayList()
 
-    private val assertions = CopyOnWriteArrayList<IAssertion>()
-
-    companion object {
+    companion object: AbstractArgos() {
         /**
          * Run an argos assertion test.
          *
@@ -30,27 +27,24 @@ class ArgosDSL private constructor(private val name: String, private val options
          * @return the results of the performed assertion tests
          */
         fun argos(name: String, options: ArgosOptions, config: ArgosDSL.() -> Unit): Publisher<IAssertionResult> {
-            val dsl = ArgosDSL(name, options).apply(config)
-            return Flowable.defer {
-                options.getListeners().forEach { it.onBeforeAssertions() }
-                Flowable.fromIterable(dsl.assertions)
-            }
-            .doOnNext { assertion ->
-                options.getListeners().forEach { it.onBeforeAssertion(assertion) }
-            }
-            .flatMap { assertion ->
-                Flowable.fromPublisher(assertion.assert(options))
-                        .map { Pair(assertion, it) }
-                        .onErrorReturn {Pair(assertion, Error(it))}
-            }
-            .doOnNext { result ->
-                options.getListeners().forEach { it.onAfterAssertion(result.first, result.second) }
-            }
-            .doOnComplete {
-                options.getListeners().forEach { it.onAfterAssertions() }
-            }
-            .map { it.second }
+            val dsl = ArgosDSL().apply(config)
+            return argos(name, options, dsl.assertions)
         }
+    }
+
+    private fun addAssertion(assertion: IAssertion) {
+        assertions.add(AssertionGroup(null, listOf(assertion)))
+    }
+
+    fun assertionGroup(name: String, config: ArgosDSL.() -> Unit) {
+        val copy = CopyOnWriteArrayList(assertions)
+        assertions.clear()
+
+        apply(config)
+        val group = AssertionGroup(name, assertions.flatMap { it.assertions })
+        assertions.clear()
+        assertions.addAll(copy)
+        assertions.add(group)
     }
 
     /**
@@ -62,7 +56,7 @@ class ArgosDSL private constructor(private val name: String, private val options
      */
     @JvmOverloads
     fun assertIntent(text: String, intent: String, score: Float = 0.85f) {
-        assertions.add(IntentAssertion(IntentAssertionSpec(text, intent, score)))
+        addAssertion(IntentAssertion(IntentAssertionSpec(text, intent, score)))
     }
 
     /**
@@ -74,13 +68,13 @@ class ArgosDSL private constructor(private val name: String, private val options
      */
     @JvmOverloads
     fun assertSimilarity(text1: String, text2: String, threshold: Float = 0.9f) {
-        assertions.add(SimilarityAssertion(SimilarityAssertionSpec(text1, text2, threshold)))
+        addAssertion(SimilarityAssertion(SimilarityAssertionSpec(text1, text2, threshold)))
     }
 
     // TODO: javadoc
     fun assertConversation(config: Conversation.() -> Unit) {
         val conv = Conversation().apply(config)
-        assertions.add(ConversationAssertion(ConversationAssertionSpec(conv.participants, conv.attributes)))
+        addAssertion(ConversationAssertion(ConversationAssertionSpec(conv.participants, conv.attributes)))
     }
 
     /**
@@ -92,7 +86,7 @@ class ArgosDSL private constructor(private val name: String, private val options
     fun assertNer(text: String, entities: NER.() -> Unit) {
         val entity = NER()
         entities(entity)
-        assertions.add(NERAssertion(NERAssertionSpec(text, entity)))
+        addAssertion(NERAssertion(NERAssertionSpec(text, entity)))
     }
 
     /**
@@ -110,7 +104,7 @@ class ArgosDSL private constructor(private val name: String, private val options
          * @return the entity added to the NER Assertion
          */
         @JvmOverloads
-        fun entity(label: String, text: String? = null, index: Int?=null, not: Boolean = false)
+        fun entity(label: String, text: String, index: Int?=null, not: Boolean = false)
                 : NERAssertionSpec.Entity {
             val entity = NERAssertionSpec.Entity(label, text, index, not)
             add(entity)
@@ -146,7 +140,7 @@ class ArgosDSL private constructor(private val name: String, private val options
     @JvmOverloads
     fun assertTranslation(inLang: String, inText: String,
                           translationLang: String, translatedText: String, threshold: Float = 0.9f) {
-        assertions.add(TranslationAssertion(
+        addAssertion(TranslationAssertion(
                 TranslationAssertionSpec(inLang, inText, translationLang, translatedText, threshold)))
     }
 
@@ -157,7 +151,7 @@ class ArgosDSL private constructor(private val name: String, private val options
      * @param type the given sentiment type
      */
     fun assertSentiment(text: String, type: String) {
-        assertions.add(SentimentAssertion(SentimentAssertionSpec(text, type)))
+        addAssertion(SentimentAssertion(SentimentAssertionSpec(text, type)))
     }
 
     /**
@@ -169,7 +163,7 @@ class ArgosDSL private constructor(private val name: String, private val options
      */
     @JvmOverloads
     fun assertImageSimilarity(image1: String, image2: String, threshold: Float = 0.9f) {
-        assertions.add(ImageSimilarityAssertion(ImageSimilarityAssertionSpec(image1, image2, threshold)))
+        addAssertion(ImageSimilarityAssertion(ImageSimilarityAssertionSpec(image1, image2, threshold)))
     }
 
     /**
@@ -181,7 +175,7 @@ class ArgosDSL private constructor(private val name: String, private val options
     fun assertOCR(image: String, texts: OCR.() -> Unit) {
         val text = OCR()
         texts(text)
-        assertions.add(OCRAssertion(OCRAssertionSpec(image, text)))
+        addAssertion(OCRAssertion(OCRAssertionSpec(image, text)))
     }
 
     /**
@@ -206,7 +200,7 @@ class ArgosDSL private constructor(private val name: String, private val options
      * @param lang the given language
      */
     fun assertLanguageDetection(text: String, lang: String) {
-        assertions.add(LanguageDetectionAssertion(LanguageDetectionAssertionSpec(text, lang)))
+        addAssertion(LanguageDetectionAssertion(LanguageDetectionAssertionSpec(text, lang)))
     }
 
     /**
@@ -216,12 +210,12 @@ class ArgosDSL private constructor(private val name: String, private val options
      * @param class the given classification
      */
     fun assertClassification(text: String, `class`: String) {
-        assertions.add(ClassificationAssertion(ClassificationAssertionSpec(text, `class`)))
+        addAssertion(ClassificationAssertion(ClassificationAssertionSpec(text, `class`)))
     }
 
     // TODO: javadoc
     fun assertRegression(text: String, score: Float) {
-        assertions.add(RegressionAssertion(RegressionAssertionSpec(text, score)))
+        addAssertion(RegressionAssertion(RegressionAssertionSpec(text, score)))
     }
 
     /**
@@ -232,7 +226,7 @@ class ArgosDSL private constructor(private val name: String, private val options
      * @param target the URL to the intended resulting image
      */
     fun assertImage(skill: String, source: String, target: String) {
-        assertions.add(ImageAssertion(ImageAssertionSpec(skill, source, target)))
+        addAssertion(ImageAssertion(ImageAssertionSpec(skill, source, target)))
     }
 
     /**
@@ -242,7 +236,7 @@ class ArgosDSL private constructor(private val name: String, private val options
      * @param speech the URL to the WAV File of the resulting speech
      */
     fun assertText2Speech(text: String, speech: String) {
-        assertions.add(Text2SpeechAssertion(Text2SpeechAssertionSpec(text, speech)))
+        addAssertion(Text2SpeechAssertion(Text2SpeechAssertionSpec(text, speech)))
     }
 
     /**
@@ -252,14 +246,14 @@ class ArgosDSL private constructor(private val name: String, private val options
      * @param text the intended resulting text
      */
     fun assertSpeech2Text(speech: String, text: String) {
-        assertions.add(Speech2TextAssertion(Speech2TextAssertionSpec(speech, text)))
+        addAssertion(Speech2TextAssertion(Speech2TextAssertionSpec(speech, text)))
     }
 
     // TODO: javadoc
     fun assertSemanticSearch(text: String, topN: Int, entries: SemanticSearch.() -> Unit) {
         val entry = SemanticSearch()
         entries(entry)
-        assertions.add(SemanticSearchAssertion(SemanticSearchAssertionSpec(text, topN, entry)))
+        addAssertion(SemanticSearchAssertion(SemanticSearchAssertionSpec(text, topN, entry)))
     }
 
     // TODO: javadoc

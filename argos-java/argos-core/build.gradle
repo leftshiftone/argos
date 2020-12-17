@@ -1,5 +1,6 @@
 dependencies {
     api project(":argos-java:argos-api")
+    testApi project(":argos-java:argos-runtime:argos-runtime-xml")
 
     implementation 'one.leftshift.gaia-sdk:gaia-sdk-core:2.0.3'
     implementation 'one.leftshift.gaia-sdk:gaia-sdk-graphql:2.0.3'

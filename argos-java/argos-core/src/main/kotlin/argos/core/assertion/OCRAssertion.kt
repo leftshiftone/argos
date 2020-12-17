@@ -1,6 +1,7 @@
 package argos.core.assertion
 
 import argos.api.*
+import argos.core.listener.LoggingAssertionListener
 import argos.core.support.ImageSupport
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
@@ -9,12 +10,13 @@ import org.reactivestreams.Publisher
 
 class OCRAssertion(val spec: OCRAssertionSpec): IAssertion {
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
-        val gaiaRef = Gaia.Companion.connect(options.config)
+        return try {
+            val gaiaRef = Gaia.connect(options.config)
 
-        val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
+            val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
                 .evaluate(mapOf("image" to ImageSupport.getByteArrayFromImage(spec.image)))
 
-        return Flowable.fromPublisher(request)
+            Flowable.fromPublisher(request)
                 .map { it.asMap() }
                 .map { e ->
                     val responseText = e["text"] ?: ""
@@ -22,9 +24,13 @@ class OCRAssertion(val spec: OCRAssertionSpec): IAssertion {
 
                     for (text in spec.texts) {
                         if(text.text == responseText)
-                            return@map Success("success")
+                            return@map Success(e.toString())
                     }
-                    Failure("failure")
+                    Failure(e.toString())
                 }
+        }
+        catch (ex: Throwable) {
+            Flowable.just(Error(ex))
+        }
     }
 }

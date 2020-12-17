@@ -47,7 +47,7 @@ class Argos {
             val parsedAssertions = ArgosXML.parse(FileInputStream(File(arg)))
             val options = ArgosOptions(parsedAssertions.identityId, GaiaConfig(url, HMACCredentials(key, secret)))
 
-            parsedAssertions.assertionList
+            parsedAssertions.getAllAssertions()
                     .map { it.assert(options) }
                     .forEach { Flowable.fromPublisher(it).blockingForEach { ret.add(it.getMessage())} }
         }

@@ -13,19 +13,25 @@ import org.reactivestreams.Publisher
 class IntentAssertion(val spec: IntentAssertionSpec) : IAssertion {
 
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
-        val gaiaRef = Gaia.connect(options.config)
+        return try {
+            val gaiaRef = Gaia.connect(options.config)
 
-        val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
-                .evaluate(mapOf("text" to spec.text, "treshold" to spec.score))
+            val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
+                .evaluate(mapOf("text" to spec.text, "threshold" to spec.score))
 
-        return Flowable.fromPublisher(request)
+            Flowable.fromPublisher(request)
                 .map { it.asMap() }
                 .map { e ->
                     if (e[":type"] == "Match" && e["reference"] == spec.intent)
-                        Success("success")
-                    else
-                        Failure("failure")
+                        Success(e.toString())
+                    else {
+                        Failure(e.toString())
+                    }
                 }
+        }
+        catch (ex: Throwable) {
+            Flowable.just(Error(ex))
+        }
     }
 
 }

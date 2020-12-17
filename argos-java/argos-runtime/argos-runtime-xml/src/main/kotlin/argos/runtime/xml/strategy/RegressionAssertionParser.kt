@@ -5,16 +5,15 @@ import argos.core.assertion.RegressionAssertion
 import argos.core.assertion.RegressionAssertionSpec
 import argos.runtime.xml.support.findAttr
 import argos.runtime.xml.support.map
+import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 
 class RegressionAssertionParser: AbstractAssertionParser() {
 
-    override fun parse(nodeList: NodeList): List<IAssertion> {
-        return nodeList.map {
-            val text = it.textContent
-            val score = it.findAttr("score").get().toFloat()
+    override fun parse(node: Node): IAssertion {
+        val text = node.textContent
+        val score = node.findAttr("score").get().toFloat()
 
-            RegressionAssertion(RegressionAssertionSpec(text, score))
-        }
+        return RegressionAssertion(RegressionAssertionSpec(text, score))
     }
 }

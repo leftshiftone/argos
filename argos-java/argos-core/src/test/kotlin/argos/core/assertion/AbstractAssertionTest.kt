@@ -1,8 +1,8 @@
 package argos.core.assertion
 
-import argos.api.ArgosOptions
-import argos.api.IAssertion
-import argos.api.IAssertionResult
+import argos.api.*
+import argos.core.listener.JUnitReportAssertionListener
+import argos.core.listener.LoggingAssertionListener
 import gaia.sdk.HMACCredentials
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
@@ -14,13 +14,24 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import kotlin.reflect.KClass
 
-abstract class AbstractAssertionTest(val assertion: IAssertion) {
+abstract class AbstractAssertionTest(val assertion: IAssertion, withLogger: Boolean = true): AbstractArgos() {
     private val options: ArgosOptions = ArgosOptions("", GaiaConfig("", HMACCredentials("", "")))
     private lateinit var gaiaRef: GaiaRef
 
+    init {
+        if (withLogger) {
+            options.addListener(LoggingAssertionListener())
+            options.addListener(JUnitReportAssertionListener())
+        }
+    }
+
     fun testForResponse(respondingMap: Map<String, Any>, print: Boolean = false): KClass<out IAssertionResult> {
         setResponse(respondingMap)
-        val result = Flowable.fromPublisher(assertion.assert(options))
+
+        val result = Flowable.fromPublisher(
+            argos(assertion::class.java.simpleName, options, listOf(AssertionGroup(null, listOf(assertion))))
+        )
+
         if (print) printResult(result)
         return result.blockingFirst()::class
     }
@@ -46,6 +57,8 @@ abstract class AbstractAssertionTest(val assertion: IAssertion) {
     private fun printResult(result: Flowable<IAssertionResult>) {
         println(" --- Result ---\n" +
                 "Type: " + result.blockingFirst()::class + "\n" +
-                "Message: " + result.blockingFirst().getMessage())
+                "Message: " +
+                (if (result.blockingFirst().getMessage().contains("\n")) "\n\n" else "")
+                    + result.blockingFirst().getMessage())
     }
 }

@@ -21,6 +21,9 @@ jar_path = Path("resources/argos-java.jar")
 args = [jar_path]  # Any number of args to be passed to the jar file
 
 # # args -> XML
+args.append("url=test-url")
+args.append("key=test-key")
+args.append("secret=test-secret")
 args.append(Path("tests/resources/intentAssertionTest.xml"))
 
 # # args -> DSL
@@ -29,7 +32,6 @@ args.append(Path("tests/resources/intentAssertionTest.xml"))
 print(args, "\n")
 
 result = jarWrapper(*args)
-
 for out in result:
     out = out.decode()
     print(out)

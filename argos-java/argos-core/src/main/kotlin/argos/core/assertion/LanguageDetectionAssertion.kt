@@ -9,18 +9,23 @@ import org.reactivestreams.Publisher
 class LanguageDetectionAssertion(val spec: LanguageDetectionAssertionSpec): IAssertion {
 
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
-        val gaiaRef = Gaia.Companion.connect(options.config)
+        return try {
+            val gaiaRef = Gaia.Companion.connect(options.config)
 
-        val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
+            val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
                 .evaluate(mapOf("text" to spec.text))
 
-        return Flowable.fromPublisher(request)
+            Flowable.fromPublisher(request)
                 .map { it.asMap() }
                 .map { e ->
                     val lang = e["lang"] ?: ""
                     if (spec.lang == lang)
-                        return@map Success("success")
-                    Failure("Language mismatch: ${spec.lang} ($lang)")
+                        return@map Success(e.toString())
+                    Failure(e.toString())
                 }
+        }
+        catch (ex: Throwable) {
+            Flowable.just(Error(ex))
+        }
     }
 }

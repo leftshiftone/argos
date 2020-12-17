@@ -9,12 +9,13 @@ import org.reactivestreams.Publisher
 class NERAssertion(val spec: NERAssertionSpec): IAssertion {
 
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
-        val gaiaRef = Gaia.connect(options.config)
+        return try {
+            val gaiaRef = Gaia.connect(options.config)
 
-        val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
+            val request: Publisher<SkillEvaluation> = gaiaRef.skill(options.config.url)
                 .evaluate(mapOf("text" to spec.text))
 
-        return Flowable.fromPublisher(request)
+            Flowable.fromPublisher(request)
                 .map { it.asMap() }
                 .map { e ->
                     val nerResult = e["ner"]
@@ -26,14 +27,25 @@ class NERAssertion(val spec: NERAssertionSpec): IAssertion {
 
                         for (entity in spec.entities) {
                             val label = ner["label"] ?: ""
+                            val text = ner["text"] ?: ""
 
-                            if (label != entity.label && !entity.not)
-                                return@map Failure("Entity mismatch: $entity ($label)")
-                            if (label == entity.label && entity.not)
-                                return@map Failure("Entity mismatch: $entity ($label)")
+                            if (text == entity.text) {
+                                if (label == entity.label) {
+                                    if (entity.not)
+                                        return@map Failure("{ner=not(Entity(text=${text}, label=${label}))}")
+                                }
+                                else {
+                                    if (!entity.not)
+                                        return@map Failure("{ner=Entity(text=${text}, label=${label})}")
+                                }
+                            }
                         }
                     }
-                    Success("success")
+                    Success(e.toString())
                 }
+        }
+        catch (ex: Throwable) {
+            Flowable.just(Error(ex))
+        }
     }
 }
