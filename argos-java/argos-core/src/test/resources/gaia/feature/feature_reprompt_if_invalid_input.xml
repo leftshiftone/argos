@@ -1,0 +1,53 @@
+<!--
+  ~ Copyright (c) 2016-2020, Leftshift One
+  ~ __________________
+  ~ [2020] Leftshift One
+  ~ All Rights Reserved.
+  ~ NOTICE:  All information contained herein is, and remains
+  ~ the property of Leftshift One and its suppliers,
+  ~ if any.  The intellectual and technical concepts contained
+  ~ herein are proprietary to Leftshift One
+  ~ and its suppliers and may be covered by Patents,
+  ~ patents in process, and are protected by trade secret or copyright law.
+  ~ Dissemination of this information or reproduction of this material
+  ~ is strictly forbidden unless prior written permission is obtained
+  ~ from Leftshift One.
+  -->
+
+<assertions identityId="606f6887-7c0e-46a3-899f-dd45508eb451">
+    <conversationAssertion>
+        <reception><json>{"feature":"reprompt_if_invalid_input"}</json></reception>
+        <gaia>
+            <block>
+                <label>Mail?</label>
+            </block>
+        </gaia>
+        <user>
+            <label>asdf</label>
+        </user>
+        <gaia>
+            <or>
+                <label>Entschuldigung, das verstehe ich leider nicht.</label>
+                <label>Ganz nach dem Motto "Man lernt nie aus" bilde ich mich laufend weiter - frag mich doch später noch
+                    einmal danach.
+                </label>
+            </or>
+        </gaia>
+        <gaia>
+            <block>
+                <label>Mail?</label>
+            </block>
+        </gaia>
+        <user>
+            <label>test@test.com</label>
+        </user>
+        <gaia>
+            <context>
+                <assertJson path="$.email[0]">test@test.com</assertJson>
+            </context>
+        </gaia>
+        <gaia>
+            <label>Completed.</label>
+        </gaia>
+    </conversationAssertion>
+</assertions>

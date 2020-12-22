@@ -2,15 +2,12 @@ package argos.runtime.xml
 
 import argos.api.ArgosOptions
 import argos.api.AssertionGroup
-import argos.api.IAssertion
 import argos.api.IAssertionResult
 import argos.core.assertion.AbstractArgos
-import argos.core.conversation.Gaia
 import argos.core.listener.JUnitReportAssertionListener
 import argos.core.listener.LoggingAssertionListener
 import argos.runtime.xml.strategy.*
 import argos.runtime.xml.support.XmlParser
-import argos.runtime.xml.support.findAll
 import argos.runtime.xml.support.findAttr
 import argos.runtime.xml.support.toList
 import gaia.sdk.HMACCredentials
@@ -31,29 +28,42 @@ class ArgosXML {
     private constructor() {
         this.include = null
     }
+
+    /**
+     * ArgosXML constructor
+     *
+     * @param include a folder which holds XML files to include,
+     * needed by some assertion test cases e.g. ConversationAssertion
+     */
     constructor(include: File?) {
         this.include = include
     }
 
     /**
-     * A Data-Class which holds the parsed IAssertions.
+     * A Data-Class which holds all assertions and information for an argos test.
      *
      * @param identityId the identity id
+     * @param name the name of this argos test
+     * @param assertions a list of assertion groups which hold the assertions
      */
      data class ParsedAssertions(
         val identityId: String,
         val name: String,
         val assertions: List<AssertionGroup>) {
-         fun getAllAssertions() = assertions.flatMap { it.assertions }
+        /**
+         * Get every assertion from all assertion groups.
+         *
+         * @return a list which holds every assertion
+         */
+        fun getAllAssertions() = assertions.flatMap { it.assertions }
      }
 
-
     /**
-     * Parse argos assertions from XML with declared include File.
+     * Parse argos assertions from XML instructions.
      *
      * @param input the InputStream of the XML instructions
      *
-     * @return a ParsedAssertions instance of the Assertions from the XML
+     * @return a <code>ParsedAssertions</code> instance which holds the assertions
      */
     fun parse(input: InputStream): ParsedAssertions {
         val doc = XmlParser(scheme).invoke(input)
@@ -69,29 +79,50 @@ class ArgosXML {
 
     companion object: AbstractArgos() {
         /**
-         * Parse argos assertions from XML.
+         * Parse argos assertions from XML instructions.
          *
          * @param input the InputStream of the XML instructions
          *
-         * @return a ParsedAssertions instance of the Assertions from the XML
+         * @return a <code>ParsedAssertions</code> instance which holds the assertions
          */
         fun parse(input: InputStream): ParsedAssertions {
             return ArgosXML().parse(input)
         }
 
-        // TODO: add Listener support
-        fun argos(parsedAssertions: ParsedAssertions): Publisher<IAssertionResult> {
-            val options = ArgosOptions(
-                parsedAssertions.identityId,
-                GaiaConfig("", HMACCredentials("key", "secret")))   // Todos
-
-            options.addListener(LoggingAssertionListener())
-            options.addListener(JUnitReportAssertionListener())
+        /**
+         * Execute an argos test from the given parsed assertions.
+         *
+         * @param parsedAssertions a ParsedAssertions instance which holds the assertions
+         * @param options the required options to connect to a gaia instance
+         *
+         * @return the result of the assertion test as an instance of a IAssertionResult-Publisher
+         */
+        fun argos(parsedAssertions: ParsedAssertions, options: ArgosOptions): Publisher<IAssertionResult> {
 
             return argos(parsedAssertions.name, options, parsedAssertions.assertions)
         }
 
+        /**
+         * Execute an argos test from the given parsed assertions.
+         *
+         * @param parsedAssertions a ParsedAssertions instance which holds the assertions
+         *
+         * @return the result of the assertion test as an instance of a IAssertionResult-Publisher
+         */
+        fun argos(parsedAssertions: ParsedAssertions): Publisher<IAssertionResult> {
+            return argos(parsedAssertions, ArgosOptions(parsedAssertions.identityId))
+        }
 
+        /**
+         * Parse a <code>NodeList</code> for assertion tags.
+         *
+         * @param nodeList the <code>NodeList</code> to parse
+         * @param include the include folder for include-tags
+         *
+         * @return  the assertions divided in assertion groups;
+         *          if an assertion is not part of an assertion group,
+         *           it will be added as a single item to an assertion group with <code>null</code> as group name
+         */
         internal fun parseNodeList(nodeList: NodeList, include: File? = null): List<AssertionGroup> {
             val assertionGroups = mutableListOf<AssertionGroup>()
 

@@ -66,9 +66,9 @@ class ArgosTest {
     fun testNERAssertionDSL() {
         testMain(arrayOf(*testArgs,
                 "assertNer(\"ich suche einen anwalt in der steiermark\") {\n" +
-                "        entity(\"location\", \"steiermark\")\n" +
-                "        not(entity(\"organization\"))\n" +
-                "    }"), NERAssertion::class)
+                "                entity(\"location\", \"steiermark\", 6)\n" +
+                "                not(entity(\"organization\", \"steiermark\"))\n" +
+                "            }"), NERAssertion::class)
     }
 
     @Test

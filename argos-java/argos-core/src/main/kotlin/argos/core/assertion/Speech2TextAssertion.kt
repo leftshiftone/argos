@@ -1,13 +1,16 @@
 package argos.core.assertion
 
 import argos.api.*
-import argos.core.listener.LoggingAssertionListener
 import argos.core.support.FileSupport
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 
+/**
+ * This IAssertion implementation is used to compare the result of the
+ * speech to text skill evaluation with an expected result value.
+ */
 class Speech2TextAssertion(val spec: Speech2TextAssertionSpec): IAssertion {
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
         return try {

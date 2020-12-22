@@ -1,0 +1,21 @@
+<assertions identityId="606f6887-7c0e-46a3-899f-dd45508eb451">
+    <conversationAssertion>
+        <reception><json>{"feature":"atreus_gaiaquery"}</json></reception>
+        <gaia>
+            <label>Next?</label>
+            <button value="true">Yes</button>
+            <button value="false">No</button>
+        </gaia>
+        <gaia>
+            <context>
+                <assertJson path="$.result[0].count">0</assertJson>
+            </context>
+        </gaia>
+        <user>
+            <button value="true">Yes</button>
+        </user>
+        <gaia>
+            <label>Finished!</label>
+        </gaia>
+    </conversationAssertion>
+</assertions>

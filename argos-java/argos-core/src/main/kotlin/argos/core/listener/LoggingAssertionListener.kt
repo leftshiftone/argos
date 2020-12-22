@@ -8,6 +8,12 @@ import argos.core.support.ImageSupport
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+/**
+ * This class implements the IAssertionListener-Interface to log assertion test results.
+ * This listener has to be added to an ArgosOptions instance to be executed in an argos test.
+ *
+ * @see ArgosOptions.addListener
+ */
 class LoggingAssertionListener: IAssertionListener {
     private val logger: Logger = LoggerFactory.getLogger(LoggingAssertionListener::class.java)
 

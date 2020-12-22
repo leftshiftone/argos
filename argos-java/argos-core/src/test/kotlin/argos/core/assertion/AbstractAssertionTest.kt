@@ -14,8 +14,14 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import kotlin.reflect.KClass
 
-abstract class AbstractAssertionTest(val assertion: IAssertion, withLogger: Boolean = true): AbstractArgos() {
-    private val options: ArgosOptions = ArgosOptions("", GaiaConfig("", HMACCredentials("", "")))
+/**
+ * Classes which implement this abstract class can be used to execute argos tests with mocks and predefined responses.
+ *
+ * @param assertion the assertion on which the mocked argos test should be executed on
+ * @param withLogger if <code>true</code>, this test will log infos during the test
+ */
+abstract class AbstractAssertionTest(val assertion: IAssertion, withLogger: Boolean = false): AbstractArgos() {
+    private val options: ArgosOptions = ArgosOptions("")
     private lateinit var gaiaRef: GaiaRef
 
     init {
@@ -25,6 +31,13 @@ abstract class AbstractAssertionTest(val assertion: IAssertion, withLogger: Bool
         }
     }
 
+    /**
+     * Executes an argos test for the defined response.
+     *
+     * @param respondingMap the mocked gaia response
+     *
+     * @return the type of the result
+     */
     fun testForResponse(respondingMap: Map<String, Any>, print: Boolean = false): KClass<out IAssertionResult> {
         setResponse(respondingMap)
 

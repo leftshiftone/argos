@@ -88,7 +88,7 @@ class ConnectionEvaluator(val list: List<AbstractParticipant>) {
         return gatter.renderables
                 .map { it as AssertJson }
                 .map {
-                    val pathResult = jsonContext.read<String>(it.path)
+                    val pathResult = jsonContext.read<Any>(it.path).toString()
                     logger.info("Expected '${it.expectation}' and got '$pathResult' for json path '${it.path}' and ${type} $message")
                     val pathAssertionResult = pathResult == it.expectation
                     pathAssertionResult

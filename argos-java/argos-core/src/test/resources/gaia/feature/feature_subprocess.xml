@@ -1,0 +1,8 @@
+<assertions identityId="606f6887-7c0e-46a3-899f-dd45508eb451">
+    <conversationAssertion>
+        <reception><json>{"feature":"subprocess"}</json></reception>
+        <gaia>
+            <label>Finished!</label>
+        </gaia>
+    </conversationAssertion>
+</assertions>

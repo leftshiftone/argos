@@ -18,47 +18,52 @@ import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
+// TODO: javadoc
 class ConversationAssertion(val spec: ConversationAssertionSpec) : IAssertion {
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
-        val attributes = HashMap<String, Any>()
+        return try {
+            val intQueue = LinkedBlockingQueue<AbstractGatter>()
+            val ctxQueue = LinkedBlockingDeque<String>()
+            val logQueue = LinkedBlockingDeque<String>()
+            val ntfQueue = LinkedBlockingDeque<String>()
 
-        val intQueue = LinkedBlockingQueue<AbstractGatter>()
-        val ctxQueue = LinkedBlockingDeque<String>()
-        val logQueue = LinkedBlockingDeque<String>()
-        val ntfQueue = LinkedBlockingDeque<String>()
-
-        val connection = Connection(options).connect()
+            val connection = Connection(options).connect()
                 .subscribe(INTERACTION, InteractionMessageListener(intQueue))
                 .subscribe(CONTEXT, ContextMessageListener(ctxQueue))
                 .subscribe(LOGGING, LoggingMessageListener(logQueue))
                 .subscribe(NOTIFICATION, NotificationMessageListener(ntfQueue))
-                .reception(attributes)
+                .reception(spec.attributes)
 
-        val intSupplier = GatterSupplier(intQueue, timeout())
-        val ctxSupplier = StringSupplier(ctxQueue)
-        val logSupplier = StringSupplier(logQueue)
-        val ntfSupplier = StringSupplier(ntfQueue)
-        val intConsumer = GatterConsumer(connection)
+            val intSupplier = GatterSupplier(intQueue, timeout())
+            val ctxSupplier = StringSupplier(ctxQueue)
+            val logSupplier = StringSupplier(logQueue)
+            val ntfSupplier = StringSupplier(ntfQueue)
+            val intConsumer = GatterConsumer(connection)
 
-        val errorCollector = ArrayList<String>()
-        val evaluation = ConnectionEvaluator(spec.participants)
+            val errorCollector = ArrayList<String>()
+            val evaluation = ConnectionEvaluator(spec.participants)
                 .evaluate(intConsumer, intSupplier, ctxSupplier, logSupplier, ntfSupplier, errorCollector)
 
-        errorCollector.forEach(System.err::println)
-        return when (evaluation) {
-            true -> Flowable.just(Success("conversation successful"))
-            false -> Flowable.just(Failure("conversation failed"))
+            errorCollector.forEach(System.err::println)
+
+            when (evaluation) {
+                true -> Flowable.just(Success("conversation successful"))
+                false -> Flowable.just(Failure("conversation failed"))
+            }
+        }
+        catch (ex: Throwable) {
+            Flowable.just(Error(ex))
         }
     }
 
     /**
      * May be used to set a custom timeout per test implementation
-     * @param timeout
-     * @param timeUnit
-     * @return
+     * @param timeout the time
+     * @param timeUnit the unit of the timeout
+     * @return a pair of timout and timeUnit
      */
-    private fun timeout(): Pair<Long, TimeUnit> {
-        return Pair(30L, TimeUnit.SECONDS)
+    private fun timeout(timeout: Long = 30L, timeUnit: TimeUnit = TimeUnit.SECONDS): Pair<Long, TimeUnit> {
+        return Pair(timeout, timeUnit)
     }
 
 }

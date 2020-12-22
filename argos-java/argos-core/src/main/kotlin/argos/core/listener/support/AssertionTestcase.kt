@@ -7,24 +7,31 @@ import argos.api.Success
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 
+/**
+ * This class holds all assertion test results for the given assertion group.
+ *
+ * @param assertionGroup the assertionGroup instance whose test results are stored in this class
+ */
 data class AssertionTestcase(val assertionGroup: AssertionGroup): ArrayList<AssertionTestResult>() {
-
+    /**
+     * Create a 'testcase'-node for a JUnit XML-Report
+     *
+     * @param doc the parent document
+     *
+     * @return a <code>Node</code> instance which holds the test results for this assertion group
+     */
     fun createNode(doc: Document): Node {
         val element = doc.createElement("testcase")
 
-        // Name-Attribute
         element.setAttribute("name", assertionGroup.name
             ?: assertionGroup.assertions.get(0)::class.java.simpleName)
 
-        // Time-Attribute
         var time: Long = 0
         forEach { time += it.timeMillis }
         element.setAttribute("time",  time.toString())
 
-        // Assertions-Attribute
         element.setAttribute("assertions", size.toString())
 
-        // Result-Elemente
         forEach {
             val child: Node? = when(it.result) {
                 is Success -> null

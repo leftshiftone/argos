@@ -1,0 +1,36 @@
+<assertions identityId="606f6887-7c0e-46a3-899f-dd45508eb451">
+    <conversationAssertion>
+        <reception>
+            <json>{"feature":"ambiguous_identity_supervisors"}</json>
+        </reception>
+        <gaia>
+            <block>
+                <label>Next?</label>
+                <button value="true">Yes</button>
+                <button value="false">No</button>
+            </block>
+        </gaia>
+        <user>
+            <label>patatas</label>
+        </user>
+        <gaia>
+            <block>
+                <label>Multiple matches were found in different identities with equal weight. Please select one to
+                    continue
+                </label>
+                <block>
+                    <button value="fd9cf63a-81da-41fe-af80-407cbb0d2112">Feature-Supervisor-3</button>
+                </block>
+                <block>
+                    <button value="82a8d2b6-f6a3-418a-a457-a3503cbe7401">Feature-Supervisor-4</button>
+                </block>
+            </block>
+        </gaia>
+        <user>
+            <button value="82a8d2b6-f6a3-418a-a457-a3503cbe7401">Feature-Supervisor-4</button>
+        </user>
+        <gaia>
+            <label>Disambiguation resolved by Feature-Supervisor-4</label>
+        </gaia>
+    </conversationAssertion>
+</assertions>

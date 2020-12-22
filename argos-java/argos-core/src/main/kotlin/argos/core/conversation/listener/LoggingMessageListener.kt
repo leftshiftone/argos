@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.BlockingDeque
 
 class LoggingMessageListener(val deque: BlockingDeque<String>) : AbstractMessageListener() {
-    private val logger: Logger = LoggerFactory.getLogger(ContextMessageListener::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(LoggingMessageListener::class.java)
 
     override fun handle(message: QueuePayload<ByteArray>) {
         try {

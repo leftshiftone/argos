@@ -15,6 +15,9 @@ import java.io.FileInputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 
+/**
+ * Class to run Argos tests from the command line.
+ */
 class Argos {
 
     companion object {

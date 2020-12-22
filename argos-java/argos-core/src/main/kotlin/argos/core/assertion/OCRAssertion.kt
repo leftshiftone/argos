@@ -1,13 +1,16 @@
 package argos.core.assertion
 
 import argos.api.*
-import argos.core.listener.LoggingAssertionListener
 import argos.core.support.ImageSupport
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 
+/**
+ * This IAssertion implementation is used to compare the result of the
+ * optical character recognition skill evaluation with an expected result value.
+ */
 class OCRAssertion(val spec: OCRAssertionSpec): IAssertion {
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
         return try {

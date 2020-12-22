@@ -1,0 +1,16 @@
+<assertions identityId="606f6887-7c0e-46a3-899f-dd45508eb451">
+    <conversationAssertion>
+        <reception><json>{"feature":"context_in_out"}</json></reception>
+        <gaia>
+            <label>Finished!</label>
+        </gaia>
+        <gaia>
+            <context>
+                <assertJson path="$.outgoing_true">true</assertJson>
+            </context>
+        </gaia>
+        <gaia>
+            <label>Finished!</label>
+        </gaia>
+    </conversationAssertion>
+</assertions>

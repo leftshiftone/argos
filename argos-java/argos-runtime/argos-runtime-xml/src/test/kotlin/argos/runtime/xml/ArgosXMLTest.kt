@@ -1,8 +1,13 @@
 package argos.runtime.xml
 
+import argos.api.ArgosOptions
 import argos.core.assertion.AbstractArgos
+import argos.core.listener.JUnitReportAssertionListener
+import argos.core.listener.LoggingAssertionListener
+import gaia.sdk.HMACCredentials
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
+import gaia.sdk.core.GaiaConfig
 import gaia.sdk.core.GaiaRef
 import io.mockk.*
 import io.reactivex.Flowable
@@ -21,6 +26,15 @@ class ArgosXMLTest: AbstractArgos() {
     fun testArgos() {
         val parsed = ArgosXML.parse(FileInputStream(junitReportXmlFile))
         Flowable.fromPublisher(ArgosXML.argos(parsed)).subscribe()
+    }
+
+    @Test
+    fun testArgosWithReport() {
+        val parsed = ArgosXML.parse(FileInputStream(junitReportXmlFile))
+        val options = ArgosOptions(parsed.identityId)
+        options.addListener(LoggingAssertionListener())
+        options.addListener(JUnitReportAssertionListener())
+        Flowable.fromPublisher(ArgosXML.argos(parsed, options)).subscribe()
     }
 
     @BeforeEach

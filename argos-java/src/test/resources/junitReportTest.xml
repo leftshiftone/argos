@@ -1,0 +1,11 @@
+<assertions identityId="16082f40-3043-495a-8833-90fba9d04319" name="ClassificationAssertionTest">
+
+    <assertionGroup name="Classification Test#1">
+        <classificationAssertion class="customClass">Text</classificationAssertion>
+        <classificationAssertion class="anotherClass">Text</classificationAssertion>
+    </assertionGroup>
+
+    <classificationAssertion class="otherClass">Text</classificationAssertion>
+    <classificationAssertion class="someOtherClass">Text</classificationAssertion>
+
+</assertions>

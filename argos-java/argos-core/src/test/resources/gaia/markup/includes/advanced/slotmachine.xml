@@ -1,0 +1,55 @@
+<!--
+  ~ Copyright (c) 2016-2019, Leftshift One
+  ~ __________________
+  ~ [2019] Leftshift One
+  ~ All Rights Reserved.
+  ~ NOTICE:  All information contained herein is, and remains
+  ~ the property of Leftshift One and its suppliers,
+  ~ if any.  The intellectual and technical concepts contained
+  ~ herein are proprietary to Leftshift One
+  ~ and its suppliers and may be covered by Patents,
+  ~ patents in process, and are protected by trade secret or copyright law.
+  ~ Dissemination of this information or reproduction of this material
+  ~ is strictly forbidden unless prior written permission is obtained
+  ~ from Leftshift One.
+  -->
+<assertions>
+    <conversationAssertion>
+        <gaia>
+            <form>
+                <label>Select your birth date</label>
+                <slotmachine class="slotmachine" id="slotmachine">
+                    <reel name="centuries">
+                        <reelValue valueType="char" value="nineteenhundret"></reelValue>
+                        <reelValue valueType="char" value="2k"/>
+                    </reel>
+                    <reel name="decades">
+                        <reelValue valueType="digit" value="0"></reelValue>
+                        <reelValue valueType="digit" value="1"></reelValue>
+                        <reelValue valueType="digit" value="2"></reelValue>
+                        <reelValue valueType="digit" value="3"></reelValue>
+                        <reelValue valueType="digit" value="4"></reelValue>
+                        <reelValue valueType="digit" value="5"></reelValue>
+                        <reelValue valueType="digit" value="6"></reelValue>
+                        <reelValue valueType="digit" value="7"></reelValue>
+                        <reelValue valueType="img" value="https://example.com/image.png"></reelValue>
+                        <reelValue valueType="digit" value="9"></reelValue>
+                    </reel>
+                    <reel name="years">
+                        <reelValue valueType="digit" value="0"></reelValue>
+                        <reelValue valueType="digit" value="1"></reelValue>
+                        <reelValue valueType="digit" value="2"></reelValue>
+                        <reelValue valueType="digit" value="3"></reelValue>
+                        <reelValue valueType="digit" value="4"></reelValue>
+                        <reelValue valueType="digit" value="5"></reelValue>
+                        <reelValue valueType="digit" value="6"></reelValue>
+                        <reelValue valueType="digit" value="7"></reelValue>
+                        <reelValue valueType="img" value="https://example.com/image.png"></reelValue>
+                        <reelValue valueType="digit" value="9"></reelValue>
+                    </reel>
+                </slotmachine>
+                <submit>Next</submit>
+            </form>
+        </gaia>
+    </conversationAssertion>
+</assertions>

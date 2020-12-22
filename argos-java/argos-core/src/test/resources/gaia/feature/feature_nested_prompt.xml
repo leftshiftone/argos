@@ -1,0 +1,21 @@
+<assertions identityId="606f6887-7c0e-46a3-899f-dd45508eb451">
+    <conversationAssertion>
+        <reception><json>{"feature":"nested_prompt"}</json></reception>
+
+        <gaia>
+            <form>
+                <headline>Prompts</headline>
+
+                <label>Bist du ein Promt?</label>
+                <singleChoice name="singleChoice" class="choice" required="true">
+                    <choice class="yes" name="yes">Ja</choice>
+                    <choice class="no" name="no">Nein</choice>
+                </singleChoice>
+
+                <block>
+                    <submit>Weiter</submit>
+                </block>
+            </form>
+        </gaia>
+    </conversationAssertion>
+</assertions>

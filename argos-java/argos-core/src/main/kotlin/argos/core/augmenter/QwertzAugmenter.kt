@@ -18,7 +18,11 @@ package argos.core.augmenter
 
 import java.util.*
 
-// TODO: javadoc
+/**
+ * Class to add typing errors to an input text.
+ *
+ * @param seed the initial seed of a Random-object
+ */
 class QwertzAugmenter(seed: Long? = null) {
 
     private val random = if (seed != null) Random(seed) else Random()
@@ -69,6 +73,13 @@ class QwertzAugmenter(seed: Long? = null) {
         }
     }
 
+    /**
+     * add typos to a text
+     *
+     * @param value the input text
+     *
+     * @return the augmented text
+     */
     fun augment(value: String): String {
         val tokens = value.split("\\s+|(?=\\p{Punct})|(?<=\\p{Punct})".toRegex())
                 .filter { it.isNotBlank() }

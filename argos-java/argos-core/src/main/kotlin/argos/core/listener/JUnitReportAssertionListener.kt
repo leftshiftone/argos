@@ -1,9 +1,6 @@
 package argos.core.listener
 
-import argos.api.AssertionGroup
-import argos.api.IAssertion
-import argos.api.IAssertionListener
-import argos.api.IAssertionResult
+import argos.api.*
 import argos.core.listener.support.AssertionTestResult
 import argos.core.listener.support.AssertionTestcase
 import argos.core.listener.support.AssertionTestsuite
@@ -15,10 +12,16 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+import kotlin.math.log
 
-class JUnitReportAssertionListener: IAssertionListener {
+/**
+ * This class implements the IAssertion-Interface to create JUnit XML-Reports for an argos test.
+ * This listener has to be added to an ArgosOptions instance to be executed in an argos test.
+ *
+ * @see ArgosOptions.addListener
+ */
+class JUnitReportAssertionListener(private val logPath: String = "build/reports"): IAssertionListener {
     private val logger: Logger = LoggerFactory.getLogger(JUnitReportAssertionListener::class.java)
-    private val logPath = File("outputFolder") // TODO: change output folder
     private var testsuite: AssertionTestsuite? = null
     private val groupMap = mutableMapOf<AssertionGroup, MutableList<AssertionTestResult>>()
 
@@ -54,7 +57,12 @@ class JUnitReportAssertionListener: IAssertionListener {
             val domSource = DOMSource(doc)
 
             val timestamp = SimpleDateFormat("yyyy-MM-dd--HH-mm-ss").format(System.currentTimeMillis())
-            val testfile = File(logPath, "${testsuite!!.name}_$timestamp.xml")
+            var testfile = File(logPath, "${testsuite!!.name}_$timestamp.xml")
+
+            var i = 0
+            while (testfile.exists()) {
+                testfile = File(logPath, "${testsuite!!.name}_${timestamp}_${++i}.xml")
+            }
 
             val streamResult = StreamResult(testfile)
 

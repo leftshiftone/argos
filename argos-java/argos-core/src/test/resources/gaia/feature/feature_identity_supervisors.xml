@@ -1,0 +1,59 @@
+<assertions identityId="606f6887-7c0e-46a3-899f-dd45508eb451">
+    <conversationAssertion>
+        <reception>
+            <json>{"feature":"identity_supervisors"}</json>
+        </reception>
+        <gaia>
+            <label>Next?</label>
+            <button value="true">Yes</button>
+            <button value="false">No</button>
+        </gaia>
+        <user>
+            <label>fühlst du es?</label>
+        </user>
+        <gaia>
+            <label>Ja ich fühle es, ich hoffe du auch!</label>
+        </gaia>
+        <gaia>
+            <label>Next?</label>
+            <button value="true">Yes</button>
+            <button value="false">No</button>
+        </gaia>
+        <user>
+            <label>kannst du die liebe spüren?</label>
+        </user>
+        <gaia>
+            <label>Ja danke, ich spür sie.</label>
+        </gaia>
+        <gaia>
+            <label>Next?</label>
+            <button value="true">Yes</button>
+            <button value="false">No</button>
+        </gaia>
+        <user>
+            <label>die liebe ist heute abend zu fühlen, schaffst du das?</label>
+        </user>
+        <gaia>
+            <label>Can you feel the love tonight? Ja logisch fühle ich es heute!</label>
+        </gaia>
+        <gaia>
+            <label>Next?</label>
+            <button value="true">Yes</button>
+            <button value="false">No</button>
+        </gaia>
+        <user>
+            <label>wie alt bist du?</label>
+        </user>
+        <gaia>
+            <or>
+                <label>Ich wurde im Juni 2016 zum Leben erweckt.</label>
+                <label>Bereits seit Juni 2016 darf ich meine User unterstützen.</label>
+            </or>
+        </gaia>
+        <gaia>
+            <label>Next?</label>
+            <button value="true">Yes</button>
+            <button value="false">No</button>
+        </gaia>
+    </conversationAssertion>
+</assertions>

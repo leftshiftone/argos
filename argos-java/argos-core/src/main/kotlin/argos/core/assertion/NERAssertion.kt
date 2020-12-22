@@ -6,6 +6,10 @@ import gaia.sdk.core.Gaia
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 
+/**
+ * This IAssertion implementation is used to compare the result of the
+ * named entity recognition skill evaluation with an expected result value.
+ */
 class NERAssertion(val spec: NERAssertionSpec): IAssertion {
 
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {

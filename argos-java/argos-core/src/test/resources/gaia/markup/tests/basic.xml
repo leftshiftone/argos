@@ -1,0 +1,59 @@
+<!--
+  ~ Copyright (c) 2016-2019, Leftshift One
+  ~ __________________
+  ~ [2019] Leftshift One
+  ~ All Rights Reserved.
+  ~ NOTICE:  All information contained herein is, and remains
+  ~ the property of Leftshift One and its suppliers,
+  ~ if any.  The intellectual and technical concepts contained
+  ~ herein are proprietary to Leftshift One
+  ~ and its suppliers and may be covered by Patents,
+  ~ patents in process, and are protected by trade secret or copyright law.
+  ~ Dissemination of this information or reproduction of this material
+  ~ is strictly forbidden unless prior written permission is obtained
+  ~ from Leftshift One.
+  -->
+
+<assertions identityId="2f2abfc1-a3ec-4dcd-b64c-5279887bee00">
+    <conversationAssertion>
+        <include href="/select.xml"/>
+
+        <user>
+            <button value="basic">Basic</button>
+        </user>
+
+        <include href="/basic/blockcontainer.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/basic/link.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/basic/bold.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/basic/headline.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/basic/image.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/basic/table.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/basic/text.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/basic/button.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/end.xml"/>
+    </conversationAssertion>
+</assertions>

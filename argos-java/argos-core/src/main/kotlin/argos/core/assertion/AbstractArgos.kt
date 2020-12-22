@@ -9,7 +9,19 @@ import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 import reactor.util.function.Tuple3
 
+/**
+ * An abstract class to execute argos tests.
+ */
 abstract class AbstractArgos {
+
+    /**
+     * Executes an argos test and returns a publisher of the assertion result.
+     *
+     * @param name the name of this Argos Test
+     * @param options the necessary options to connect to a gaia instance
+     *
+     * @return a publisher of the assertion result
+     */
     protected fun argos(name: String, options: ArgosOptions, assertionGroups: List<AssertionGroup>):
             Publisher<IAssertionResult> {
         return Flowable.defer {

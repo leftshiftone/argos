@@ -1,12 +1,15 @@
 package argos.core.assertion
 
 import argos.api.*
-import argos.core.listener.LoggingAssertionListener
 import gaia.sdk.api.skill.SkillEvaluation
 import gaia.sdk.core.Gaia
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 
+/**
+ * This IAssertion implementation is used to compare the result of the
+ * semantic search skill evaluation with an expected result value.
+ */
 class SemanticSearchAssertion(val spec: SemanticSearchAssertionSpec): IAssertion {
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
         return try {

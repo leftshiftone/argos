@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.collections.HashMap
 
+// TODO: javadoc
 class Connection(options: ArgosOptions) {
     private val logger = LoggerFactory.getLogger(Connection::class.java)
     private val header = QueueHeader(UUID.fromString(options.identity), UUID.randomUUID())

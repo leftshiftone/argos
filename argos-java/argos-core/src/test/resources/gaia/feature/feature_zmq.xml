@@ -1,0 +1,15 @@
+<assertions identityId="606f6887-7c0e-46a3-899f-dd45508eb451">
+    <conversationAssertion>
+        <reception><json>{"feature":"zmq"}</json></reception>
+        <gaia>
+            <label>Next?</label>
+            <button value="true">Yes</button>
+            <button value="false">No</button>
+        </gaia>
+        <gaia>
+            <context>
+                <assertJson path="$.answer[0].text">GAIA</assertJson>
+            </context>
+        </gaia>
+    </conversationAssertion>
+</assertions>

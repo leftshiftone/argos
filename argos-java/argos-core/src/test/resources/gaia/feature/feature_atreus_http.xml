@@ -1,0 +1,59 @@
+<assertions identityId="606f6887-7c0e-46a3-899f-dd45508eb451">
+    <conversationAssertion>
+        <reception>
+            <json>{"feature":"atreus_http"}</json>
+        </reception>
+        <gaia>
+            <label>Next?</label>
+            <button value="true">Yes</button>
+            <button value="false">No</button>
+        </gaia>
+        <user>
+            <button value="true">Yes</button>
+        </user>
+        <gaia>
+            <context>
+                <assertJson path="$.http_simple_get.args.foo1">bar1</assertJson>
+                <assertJson path="$.http_simple_get.headers.host">postman-echo.com</assertJson>
+            </context>
+        </gaia>
+        <gaia>
+            <label>Next?</label>
+            <button value="true">Yes</button>
+            <button value="false">No</button>
+        </gaia>
+        <user>
+            <button value="true">Yes</button>
+        </user>
+        <gaia>
+            <context>
+                <assertJson path="$.http_simple_post.data.id">1</assertJson>
+                <assertJson path="$.http_simple_post.data.foo">bar</assertJson>
+                <assertJson path="$.http_simple_post.data.sepp">true</assertJson>
+                <assertJson path="$.http_simple_post.json.id">1</assertJson>
+                <assertJson path="$.http_simple_post.json.foo">bar</assertJson>
+                <assertJson path="$.http_simple_post.json.sepp">true</assertJson>
+                <assertJson path="$.http_simple_post.headers.host">postman-echo.com</assertJson>
+            </context>
+        </gaia>
+        <gaia>
+            <label>Next?</label>
+            <button value="true">Yes</button>
+            <button value="false">No</button>
+        </gaia>
+        <user>
+            <button value="true">Yes</button>
+        </user>
+        <gaia>
+            <context>
+                <assertJson path="$.http_status_code.body.status">400</assertJson>
+                <assertJson path="$.http_status_code.status.code">400</assertJson>
+                <assertJson path="$.http_status_code.status.isError">true</assertJson>
+                <assertJson path="$.http_status_code.status.name">BAD_REQUEST</assertJson>
+            </context>
+        </gaia>
+        <gaia>
+            <label>Finished!</label>
+        </gaia>
+    </conversationAssertion>
+</assertions>

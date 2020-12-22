@@ -6,8 +6,19 @@ import org.w3c.dom.Document
 import org.w3c.dom.Node
 import java.text.SimpleDateFormat
 
+/**
+ * This class holds all the assertion testcases that were executed in this test.
+ *
+ * @param name the name of this test
+ */
 data class AssertionTestsuite(val name: String): ArrayList<AssertionTestcase>() {
-
+    /**
+     * Create a 'testsuite'-node for a JUnit XML-Report
+     *
+     * @param doc the parent document
+     *
+     * @return a <code>Node</code> instance which holds the testcases for this test
+     */
     fun createNode(doc: Document): Node {
         val element = doc.createElement("testsuite")
         element.setAttribute("name", name)

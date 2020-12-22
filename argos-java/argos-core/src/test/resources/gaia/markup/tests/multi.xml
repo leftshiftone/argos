@@ -1,0 +1,109 @@
+<!--
+  ~ Copyright (c) 2016-2019, Leftshift One
+  ~ __________________
+  ~ [2019] Leftshift One
+  ~ All Rights Reserved.
+  ~ NOTICE:  All information contained herein is, and remains
+  ~ the property of Leftshift One and its suppliers,
+  ~ if any.  The intellectual and technical concepts contained
+  ~ herein are proprietary to Leftshift One
+  ~ and its suppliers and may be covered by Patents,
+  ~ patents in process, and are protected by trade secret or copyright law.
+  ~ Dissemination of this information or reproduction of this material
+  ~ is strictly forbidden unless prior written permission is obtained
+  ~ from Leftshift One.
+  -->
+
+<assertions identityId="2f2abfc1-a3ec-4dcd-b64c-5279887bee00">
+    <conversationAssertion>
+        <include href="/select.xml"/>
+
+        <user>
+            <button value="multi">Multiple</button>
+        </user>
+
+        <include href="/multi/items.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/multi/itemsforeach.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/multi/carousel.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/multi/carouselforeach.xml"/>
+
+        <include href="/submit.xml"/>
+
+        <include href="/multi/multiplechoice.xml"/>
+
+        <user>
+            <submit>
+                <json>
+                    {"timestamp":"","text":"Next","attributes":{"type":"submit","value":"{\"ingredientChoice\":
+                    [{\"name\":\"cheese\",\"value\":true}]}"},"type":"submit","position":"right"}
+                </json>
+            </submit>
+        </user>
+
+        <include href="/multi/multiplechoicesieve.xml"/>
+
+        <user>
+            <submit>
+                <json>
+                    {"timestamp":"","text":"Next","attributes":{"type":"submit","value":"{\"ingredientChoice\":
+                    [{\"name\":\"cheese\",\"value\":true}]}"},"type":"submit","position":"right"}
+                </json>
+            </submit>
+        </user>
+
+        <include href="/multi/singlechoice.xml"/>
+
+        <user>
+            <submit>
+                <json>
+                    {"timestamp":"","text":"Next","attributes":{"type":"submit","value":"{\"dayChoice\":
+                    [{\"name\":\"we\",\"value\":true}]}"},"type":"submit","position":"right"}
+                </json>
+            </submit>
+        </user>
+
+        <include href="/multi/singlechoicesieve.xml"/>
+
+        <user>
+            <submit>
+                <json>
+                    {"timestamp":"","text":"Next","attributes":{"type":"submit","value":"{\"dayChoice\":
+                    [{\"name\":\"we\",\"value\":true}]}"},"type":"submit","position":"right"}
+                </json>
+            </submit>
+        </user>
+
+        <include href="/multi/sliderrange.xml"/>
+
+        <user>
+            <submit>
+                <json>
+                    {"timestamp":"","text":"Next","attributes":{"type":"submit","value":"{\"moodSlider\":[3]}"},
+                    "type":"submit","position":"right"}
+                </json>
+            </submit>
+        </user>
+
+        <include href="/multi/slidervalues.xml"/>
+
+        <user>
+            <submit>
+                <json>
+                    {"timestamp":"","text":"Next","attributes":{"type":"submit","value":"{\"moodSlider\":
+                    [\"good\"]}"},"type":"submit","position":"right"}
+                </json>
+            </submit>
+        </user>
+
+        <include href="/end.xml"/>
+    </conversationAssertion>
+</assertions>

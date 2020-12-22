@@ -11,7 +11,7 @@ import org.reactivestreams.Publisher
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * Class to directly run Argos Assertion Tests.
+ * Class to execute argos assertion tests.
  */
 class ArgosDSL {
     private val assertions: CopyOnWriteArrayList<AssertionGroup> = CopyOnWriteArrayList()
@@ -31,11 +31,16 @@ class ArgosDSL {
             return argos(name, options, dsl.assertions)
         }
     }
-
     private fun addAssertion(assertion: IAssertion) {
         assertions.add(AssertionGroup(null, listOf(assertion)))
     }
 
+    /**
+     * Group multiple assertions in one assertion group.
+     *
+     * @param name the name of this assertion group
+     * @param config the assertions hold in this assertion group
+     */
     fun assertionGroup(name: String, config: ArgosDSL.() -> Unit) {
         val copy = CopyOnWriteArrayList(assertions)
         assertions.clear()
@@ -71,7 +76,11 @@ class ArgosDSL {
         addAssertion(SimilarityAssertion(SimilarityAssertionSpec(text1, text2, threshold)))
     }
 
-    // TODO: javadoc
+    /**
+     * Asserts if the given conversation is evaluated successful.
+     *
+     * @param config the conversation to perform in this test
+     */
     fun assertConversation(config: Conversation.() -> Unit) {
         val conv = Conversation().apply(config)
         addAssertion(ConversationAssertion(ConversationAssertionSpec(conv.participants, conv.attributes)))
@@ -213,7 +222,12 @@ class ArgosDSL {
         addAssertion(ClassificationAssertion(ClassificationAssertionSpec(text, `class`)))
     }
 
-    // TODO: javadoc
+    /**
+     * Asserts if the score for this text passes the given threshold.
+     *
+     * @param text the input text
+     * @param score the threshold score
+     */
     fun assertRegression(text: String, score: Float) {
         addAssertion(RegressionAssertion(RegressionAssertionSpec(text, score)))
     }
@@ -249,16 +263,29 @@ class ArgosDSL {
         addAssertion(Speech2TextAssertion(Speech2TextAssertionSpec(speech, text)))
     }
 
-    // TODO: javadoc
+    /**
+     * Asserts if the given text matches the given search entries.
+     *
+     * @param text the input text
+     * @param topN the expected responding entries size
+     * @param entries the search entries
+     */
     fun assertSemanticSearch(text: String, topN: Int, entries: SemanticSearch.() -> Unit) {
         val entry = SemanticSearch()
         entries(entry)
         addAssertion(SemanticSearchAssertion(SemanticSearchAssertionSpec(text, topN, entry)))
     }
 
-    // TODO: javadoc
+    /**
+     * Class which contains the entries for a semantic search assertion.
+     */
     class SemanticSearch: ArrayList<SemanticSearchAssertionSpec.Entry>() {
-        // TODO: javadoc
+        /**
+         * Adds a entry to the semantic search assertion.
+         *
+         * @param id the document id
+         * @param score the threshold score for this entry
+         */
         fun entry(id: String, score: Float) {
             add(SemanticSearchAssertionSpec.Entry(id, score))
         }

@@ -1,0 +1,16 @@
+<assertions identityId="606f6887-7c0e-46a3-899f-dd45508eb451">
+    <conversationAssertion>
+        <reception><json>{"feature":"buttons_textual_invoke"}</json></reception>
+        <gaia>
+            <label>Choose your side wisely</label>
+            <button name="result" value="dark_side">Dark Side</button>
+            <button name="result" value="other_side">Other Side</button>
+        </gaia>
+        <user>
+            <label>Dark Side</label>
+        </user>
+        <gaia>
+            <label>Finished!</label>
+        </gaia>
+    </conversationAssertion>
+</assertions>

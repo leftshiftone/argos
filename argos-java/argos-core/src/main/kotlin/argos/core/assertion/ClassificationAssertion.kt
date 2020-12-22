@@ -6,6 +6,10 @@ import gaia.sdk.core.Gaia
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 
+/**
+ * This IAssertion implementation is used to compare the result of the
+ * classification skill evaluation with an expected result value.
+ */
 class ClassificationAssertion(val spec: ClassificationAssertionSpec): IAssertion {
 
     override fun assert(options: ArgosOptions): Publisher<IAssertionResult> {
